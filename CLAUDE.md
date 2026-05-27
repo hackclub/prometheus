@@ -52,7 +52,8 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 | `SLACK_APP_TOKEN` | App-level token (xapp) with `connections:write` for Socket Mode |
 | `SLACK_SIGNING_SECRET` | Request signing secret |
 | `SUPERADMINS` | Comma-separated Slack user IDs seeded as global admins |
-| `LOG_CHANNEL` | Channel ID for audit logging (optional) |
+| `LOG_CHANNEL` | Channel ID for audit logging with full content (optional) |
+| `PUBLIC_LOG_CHANNEL` | Channel ID for public audit logging — redacted, shows actor/target/channel only (optional) |
 | `HACKCLUB_CDN_KEY` | CDN API key for archiving deleted threads (optional) |
 | `SLACK_BROWSER_TOKEN` | Browser token (xoxc) for undocumented moderation APIs (optional) |
 | `SLACK_COOKIE` | Session cookie (`d=` value) paired with browser token (optional) |
