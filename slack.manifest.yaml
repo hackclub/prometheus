@@ -8,6 +8,10 @@ display_information:
   background_color: "#d03e28"
 
 features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: false
+    messages_tab_read_only_enabled: true
   bot_user:
     display_name: Prometheus
     always_online: true
@@ -40,11 +44,17 @@ oauth_config:
       - channels:history
       - channels:join
       - channels:read
+      - channels:write.invites
       - chat:write
       - chat:write.customize
       - commands
       - groups:history
+      - groups:read
+      - im:read
       - im:write
+      - mpim:read
+      - mpim:write
+      - pins:write
     user:
       - channels:history
       - channels:write
@@ -69,3 +79,4 @@ settings:
   org_deploy_enabled: false
   socket_mode_enabled: true
   token_rotation_enabled: false
+  is_mcp_enabled: false
