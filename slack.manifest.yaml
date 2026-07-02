@@ -44,7 +44,9 @@ oauth_config:
       - chat:write.customize
       - commands
       - groups:history
+      - groups:read
       - im:write
+      - pins:write
     user:
       - channels:history
       - channels:write
