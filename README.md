@@ -28,7 +28,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `timeout @user [duration] reason` | Moderators | Time out a user from the channel |
 | `untimeout @user` | Moderators | Remove a timeout |
 | `welcome [set\|remove\|view]` | Managers | Manage the channel welcome message |
-| `channelmanager add\|remove\|list [@user] [manager]` | Admins | Appoint/remove moderators and managers |
+| `communitysteward add\|remove\|list [@user] [manager]` | Admins | Appoint/remove moderators and managers |
 | `admin add\|remove\|list [@user]` | Global admins | Manage global admins |
 
 **Permission roles:**
