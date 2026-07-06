@@ -3,7 +3,7 @@
   <br>Prometheus
 </h1>
 
-*Prometheus is known for stealing fire from the gods and giving it to humanity.*
+_Prometheus is known for stealing fire from the gods and giving it to humanity._
 
 Prometheus is a Slack bot that lets community members take responsibility for keeping high traffic channels tidy and welcoming. More details about why this exists in the Slacker News article: [Prometheus Brings Users More Powers to Improve Slack](https://news.hackclub.com/news/prometheus-distributed-care/).
 
@@ -17,19 +17,19 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 **Slash commands** (invoked via `/pro <subcommand>`):
 
-| Command | Who | What it does |
-| --- | --- | --- |
-| `ping` | Everyone | Check if the bot is alive |
-| `info [@user]` | Everyone | Look up info about a Slack user |
-| `coin` | Everyone | Flip a coin |
-| `help` | Everyone | Show available commands |
-| `here <message>` | Moderators | Ping all online members in the channel |
-| `channel <message>` | Moderators | Ping everyone in the channel |
-| `timeout @user [duration] reason` | Moderators | Time out a user from the channel |
-| `untimeout @user` | Moderators | Remove a timeout |
-| `welcome [set\|remove\|view]` | Managers | Manage the channel welcome message |
-| `channelmanager add\|remove\|list [@user] [manager]` | Admins | Appoint/remove moderators and managers |
-| `admin add\|remove\|list [@user]` | Global admins | Manage global admins |
+| Command                                              | Who           | What it does                           |
+| ---------------------------------------------------- | ------------- | -------------------------------------- |
+| `ping`                                               | Everyone      | Check if the bot is alive              |
+| `info [@user]`                                       | Everyone      | Look up info about a Slack user        |
+| `coin`                                               | Everyone      | Flip a coin                            |
+| `help`                                               | Everyone      | Show available commands                |
+| `here <message>`                                     | Moderators    | Ping all online members in the channel |
+| `channel <message>`                                  | Moderators    | Ping everyone in the channel           |
+| `timeout @user [duration] reason`                    | Moderators    | Time out a user from the channel       |
+| `untimeout @user`                                    | Moderators    | Remove a timeout                       |
+| `welcome [set\|remove\|view]`                        | Managers      | Manage the channel welcome message     |
+| `channelmanager add\|remove\|list [@user] [manager]` | Admins        | Appoint/remove moderators and managers |
+| `admin add\|remove\|list [@user]`                    | Global admins | Manage global admins                   |
 
 **Permission roles:**
 
@@ -46,18 +46,18 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 4. Create an app-level token with `connections:write` (for Socket Mode!).
 5. Fill out your `.env`, check the `.env.example` for reference. Here's a bit more detailed rundown of what to expect
 
-| Variable | Required | Purpose |
-| --- | --- | --- |
-| `SLACK_BOT_TOKEN` | Yes | Bot User OAuth Token (xoxb) for posting messages |
-| `SLACK_USER_TOKEN` | Yes | User OAuth Token (xoxp) workspace admin account, used for deletion and admin APIs |
-| `SLACK_APP_TOKEN` | Yes | App-Level Token (xapp) with `connections:write` for Socket Mode |
-| `SLACK_SIGNING_SECRET` | Yes | Signing secret from app settings |
-| `SUPERADMINS` | Yes | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`) |
-| `LOG_CHANNEL` | No | Channel ID for **private** audit logs which includes full message content and CDN transcripts |
-| `PUBLIC_LOG_CHANNEL` | No | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel |
-| `HACKCLUB_CDN_KEY` | No | CDN API key for archiving deleted thread archives to the HC CDN |
-| `SLACK_BROWSER_TOKEN` | No | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding) |
-| `SLACK_COOKIE` | No | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN` |
+| Variable               | Required | Purpose                                                                                           |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                  |
+| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (xoxp) workspace admin account, used for deletion and admin APIs                 |
+| `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                   |
+| `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                  |
+| `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)               |
+| `LOG_CHANNEL`          | No       | Channel ID for **private** audit logs which includes full message content and CDN transcripts     |
+| `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel |
+| `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                   |
+| `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                  |
+| `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                     |
 
 6. Run it:
 
