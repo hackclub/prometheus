@@ -2,14 +2,17 @@
   "name": "prometheus",
   "version": "1.0.0",
   "description": "giving power to the people",
-  "main": "index.js",
+  "author": "",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "start": "bun index.js",
     "dev": "bun --watch index.js",
-    "lint": "eslint ."
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
-  "author": "",
   "dependencies": {
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
@@ -17,8 +20,7 @@
     "tldts": "^7.4.6"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "eslint": "^10.4.1",
-    "globals": "^17.6.0"
+    "oxfmt": "^0.57.0",
+    "oxlint": "^1.72.0"
   }
 }
