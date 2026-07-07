@@ -50,6 +50,7 @@ oauth_config:
       - commands
       - groups:history
       - groups:read
+      - groups:write.invites
       - im:read
       - im:write
       - mpim:read
