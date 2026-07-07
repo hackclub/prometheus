@@ -1,11 +1,14 @@
-import 'dotenv/config';
-import { App } from '@slack/bolt';
-import { WebClient } from '@slack/web-api';
-import { registerCommands } from './lib/commands/index.js';
-import { registerShortcuts } from './lib/shortcuts/index.js';
-import { registerListeners } from './lib/listeners/index.js';
-import { registerActions } from './lib/actions/index.js';
-import appHomeHandler, { actions as homeActions, views as homeViews } from './lib/listeners/appHome.js';
+import "dotenv/config";
+import { App } from "@slack/bolt";
+import { WebClient } from "@slack/web-api";
+import { registerCommands } from "./lib/commands/index.js";
+import { registerShortcuts } from "./lib/shortcuts/index.js";
+import { registerListeners } from "./lib/listeners/index.js";
+import { registerActions } from "./lib/actions/index.js";
+import appHomeHandler, {
+  actions as homeActions,
+  views as homeViews,
+} from "./lib/listeners/appHome.js";
 
 export const userClient = new WebClient(process.env.SLACK_USER_TOKEN);
 
@@ -26,7 +29,7 @@ registerShortcuts(app);
 registerListeners(app);
 registerActions(app);
 
-app.event('app_home_opened', appHomeHandler);
+app.event("app_home_opened", appHomeHandler);
 
 // home tab actions
 for (const h of homeActions) {
