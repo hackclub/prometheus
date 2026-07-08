@@ -17,7 +17,7 @@
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
     "dotenv": "^17.4.2",
-    "tldts": "^7.4.6"
+    "tldts": "^7.4.7"
   },
   "devDependencies": {
     "oxfmt": "^0.57.0",
