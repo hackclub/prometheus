@@ -40,6 +40,8 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 ## Setup
 
+> **⚠️ Workspace admin perms required.** Only cloning the repo and installing the Slack app is **not** enough. Almost every moderation feature (delete message, destroy thread, timeout/kick, move members, ban enforcement, clear embeds, and similar) runs through `SLACK_USER_TOKEN` and **will not work** unless that token is a User OAuth token (`xoxp`) from a **workspace admin**. Without it, only trivial commands like `ping`, `coin`, and `help` work.
+
 1. Clone the repo.
 2. Create a Slack app from [`slack.manifest.yaml`](./slack.manifest.yaml).
 3. Install/reinstall the app to your workspace so all scopes are granted.
@@ -49,7 +51,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | Variable               | Required | Purpose                                                                                           |
 | ---------------------- | -------- | ------------------------------------------------------------------------------------------------- |
 | `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                  |
-| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (xoxp) workspace admin account, used for deletion and admin APIs                 |
+| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions        |
 | `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                   |
 | `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                  |
 | `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)               |
