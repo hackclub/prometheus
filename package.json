@@ -14,13 +14,13 @@
     "fmt:check": "oxfmt --check"
   },
   "dependencies": {
-    "@slack/bolt": "^4.7.3",
+    "@slack/bolt": "^5.0.0",
     "airtable": "^0.12.2",
     "dotenv": "^17.4.2",
-    "tldts": "^7.4.6"
+    "tldts": "^7.4.9"
   },
   "devDependencies": {
-    "oxfmt": "^0.57.0",
-    "oxlint": "^1.72.0"
+    "oxfmt": "^0.59.0",
+    "oxlint": "^1.74.0"
   }
 }
