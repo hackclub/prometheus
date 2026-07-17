@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { App } from "@slack/bolt";
+import { App, SocketModeReceiver } from "@slack/bolt";
 import { WebClient } from "@slack/web-api";
 import { registerCommands } from "./lib/commands/index.js";
 import { registerShortcuts } from "./lib/shortcuts/index.js";
@@ -12,11 +12,33 @@ import appHomeHandler, {
 
 export const userClient = new WebClient(process.env.SLACK_USER_TOKEN);
 
+let slackConnected = false;
+const receiver = new SocketModeReceiver({
+  appToken: process.env.SLACK_APP_TOKEN,
+  customRoutes: [
+    {
+      path: "/health",
+      method: "GET",
+      handler: (_req, res) => {
+        const healthy = slackConnected && receiver.client.websocket?.isActive();
+        res.writeHead(healthy ? 200 : 503, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ status: healthy ? "ok" : "disconnected" }));
+      },
+    },
+  ],
+});
+
+receiver.client.on("connected", () => {
+  slackConnected = true;
+});
+receiver.client.on("close", () => {
+  slackConnected = false;
+});
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
-  socketMode: true,
-  appToken: process.env.SLACK_APP_TOKEN,
+  receiver,
 });
 
 app.use(async ({ context, next }) => {
