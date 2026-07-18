@@ -56,9 +56,15 @@ app.event("app_home_opened", appHomeHandler);
 // home tab actions
 for (const h of homeActions) {
   if (h.actionId) {
-    app.action(h.actionId, async (args) => h.execute(args));
+    app.action(h.actionId, async (args) => {
+      await args.ack();
+      await h.execute(args);
+    });
   } else if (h.pattern) {
-    app.action(h.pattern, async (args) => h.execute(args));
+    app.action(h.pattern, async (args) => {
+      await args.ack();
+      await h.execute(args);
+    });
   }
 }
 
