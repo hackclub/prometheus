@@ -17,26 +17,27 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 **Slash commands** (invoked via `/pro <subcommand>`):
 
-| Command                                              | Who           | What it does                           |
-| ---------------------------------------------------- | ------------- | -------------------------------------- |
-| `ping`                                               | Everyone      | Check if the bot is alive              |
-| `info [@user]`                                       | Everyone      | Look up info about a Slack user        |
-| `coin`                                               | Everyone      | Flip a coin                            |
-| `help`                                               | Everyone      | Show available commands                |
-| `here <message>`                                     | Moderators    | Ping all online members in the channel |
-| `channel <message>`                                  | Moderators    | Ping everyone in the channel           |
-| `timeout @user [duration] reason`                    | Moderators    | Time out a user from the channel       |
-| `untimeout @user`                                    | Moderators    | Remove a timeout                       |
-| `welcome [set\|remove\|view]`                        | Managers      | Manage the channel welcome message     |
-| `channelmanager add\|remove\|list [@user] [manager]` | Admins        | Appoint/remove moderators and managers |
-| `admin add\|remove\|list [@user]`                    | Global admins | Manage global admins                   |
+| Command                                              | Who           | What it does                                    |
+| ---------------------------------------------------- | ------------- | ----------------------------------------------- |
+| `ping`                                               | Everyone      | Check if the bot is alive                       |
+| `info [@user]`                                       | Everyone      | Look up info about a Slack user                 |
+| `coin`                                               | Everyone      | Flip a coin                                     |
+| `help`                                               | Everyone      | Show available commands                         |
+| `here <message>`                                     | Pingers       | Ping all online members in the channel          |
+| `channel <message>`                                  | Pingers       | Ping everyone in the channel                    |
+| `timeout @user [duration] reason`                    | Moderators    | Time out a user from the channel                |
+| `untimeout @user`                                    | Moderators    | Remove a timeout                                |
+| `welcome [set\|remove\|view]`                        | Managers      | Manage the channel welcome message              |
+| `channelmanager add\|remove\|list [@user] [manager]` | Admins        | Appoint/remove pingers, moderators and managers |
+| `admin add\|remove\|list [@user]`                    | Global admins | Manage global admins                            |
 
 **Permission roles:**
 
 - **Global admin**: seeded from `SUPERADMINS`.
 - **Workspace admin**: inherited from Slack
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
-- **Channel moderator**: appointed per-channel; can timeout, @here, @channel
+- **Channel moderator**: appointed per-channel; can timeout
+- **Channel pinger**: appointed per-channel; can @here and @channel
 
 ## Setup
 
