@@ -20,7 +20,7 @@
     "tldts": "^7.4.10"
   },
   "devDependencies": {
-    "oxfmt": "^0.61.0",
-    "oxlint": "^1.75.0"
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0"
   }
 }
