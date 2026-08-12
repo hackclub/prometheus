@@ -55,6 +55,8 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                   |
 | `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                  |
 | `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)               |
+| `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                         |
+| `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                   |
 | `LOG_CHANNEL`          | No       | Channel ID for **private** audit logs which includes full message content and CDN transcripts     |
 | `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel |
 | `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                   |
