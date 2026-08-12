@@ -40,6 +40,8 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 ## Setup
 
+> **⚠️ Workspace admin perms required.** Only cloning the repo and installing the Slack app is **not** enough. Almost every moderation feature (delete message, destroy thread, timeout/kick, move members, ban enforcement, clear embeds, and similar) runs through `SLACK_USER_TOKEN` and **will not work** unless that token is a User OAuth token (`xoxp`) from a **workspace admin**. Without it, only trivial commands like `ping`, `coin`, and `help` work.
+
 1. Clone the repo.
 2. Create a Slack app from [`slack.manifest.yaml`](./slack.manifest.yaml).
 3. Install/reinstall the app to your workspace so all scopes are granted.
@@ -49,22 +51,29 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | Variable               | Required | Purpose                                                                                           |
 | ---------------------- | -------- | ------------------------------------------------------------------------------------------------- |
 | `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                  |
-| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (xoxp) workspace admin account, used for deletion and admin APIs                 |
+| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions        |
 | `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                   |
 | `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                  |
 | `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)               |
+| `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                         |
+| `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                   |
 | `LOG_CHANNEL`          | No       | Channel ID for **private** audit logs which includes full message content and CDN transcripts     |
 | `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel |
 | `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                   |
 | `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                  |
 | `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                     |
 
-6. Run it:
+6. Apply database migrations and run it:
 
 ```bash
 bun install
+bun run db:migrate
 bun start
 ```
+
+When changing `lib/db/schema.ts`, generate and commit a migration with
+`bun run db:generate`. Apply committed migrations with `bun run db:migrate`
+before starting a new application version.
 
 You should see two new message shortcuts in Slack:
 
