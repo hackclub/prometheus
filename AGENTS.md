@@ -6,6 +6,9 @@ This file provides guidance to AI agents when working with code in this reposito
 
 ```bash
 bun install       # install dependencies
+bun run db:generate # generate a migration after editing lib/db/schema.ts
+bun run db:migrate  # apply committed database migrations
+bun run db:check    # verify migration snapshot consistency
 bun start         # run the bot
 bun --watch index.js  # dev mode with auto-restart
 bun run lint      # run oxlint
@@ -38,9 +41,9 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `canAnchor` — `canManage` OR workspaceAdmin
 - `SUPERADMINS` grants access to the `/pro admin` command; it does not automatically insert rows into `global_admins`
 
-**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. Schema creation runs idempotently when the module loads. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, and `anchor_nps_responses`.
+**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, and `anchor_nps_responses`.
 
-All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently.
+All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
 
 **Logging** (`lib/logger.js`): Logs deletions and thread nukes to `LOG_CHANNEL`. Uses `SLACK_BOT_TOKEN` for posting log messages and `HACKCLUB_CDN_KEY` for archiving thread content to the Hack Club CDN.
 

@@ -63,12 +63,17 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                  |
 | `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                     |
 
-6. Run it:
+6. Apply database migrations and run it:
 
 ```bash
 bun install
+bun run db:migrate
 bun start
 ```
+
+When changing `lib/db/schema.ts`, generate and commit a migration with
+`bun run db:generate`. Apply committed migrations with `bun run db:migrate`
+before starting a new application version.
 
 You should see two new message shortcuts in Slack:
 
