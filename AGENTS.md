@@ -16,7 +16,7 @@ There are no tests in this project.
 
 ## Architecture
 
-Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `bun` and uses a local SQLite database (`prometheus.db`) via `bun:sqlite`.
+Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `bun` and uses PostgreSQL through Bun's native `SQL` client. `DATABASE_URL` is required at startup.
 
 **Entry point:** `index.js` — initializes the Bolt app with `SLACK_USER_TOKEN` (xoxp) and registers all four handler categories.
 
@@ -29,14 +29,18 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 
 **Permission model** (`lib/perms.js`):
 
-- `isGlobalAdmin` — stored in SQLite `global_admins` table; seeded from `SUPERADMINS` env var
+- `isGlobalAdmin` — stored in the PostgreSQL `global_admins` table
 - `isWorkspaceAdmin` — Slack API check (`users.info`)
 - `isChannelManager` — `appointed_managers` with `role = 'manager'`
 - `isChannelModerator` — any role in `appointed_managers` (manager or moderator)
-- `canManage` — globalAdmin OR workspaceAdmin OR channelManager (for delete/destroy/welcome)
-- `canBan` — globalAdmin OR workspaceAdmin OR channelModerator (for ban/unban/@here)
+- `canManage` — globalAdmin OR channelManager (for delete/destroy/welcome)
+- `canBan` — globalAdmin OR channelModerator (for ban/unban/@here)
+- `canAnchor` — `canManage` OR workspaceAdmin
+- `SUPERADMINS` grants access to the `/pro admin` command; it does not automatically insert rows into `global_admins`
 
-**Database** (`lib/db.js`): Tables are `global_admins`, `appointed_managers` (with `role` column: `'manager'` or `'moderator'`), `channel_bans`, `join_messages`. All queries use prepared statements.
+**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. Schema creation runs idempotently when the module loads. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, and `anchor_nps_responses`.
+
+All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently.
 
 **Logging** (`lib/logger.js`): Logs deletions and thread nukes to `LOG_CHANNEL`. Uses `SLACK_BOT_TOKEN` for posting log messages and `HACKCLUB_CDN_KEY` for archiving thread content to the Hack Club CDN.
 
@@ -52,7 +56,9 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 | `SLACK_USER_TOKEN`     | User token (xoxp) — workspace admin, used for deletion and admin APIs                      |
 | `SLACK_APP_TOKEN`      | App-level token (xapp) with `connections:write` for Socket Mode                            |
 | `SLACK_SIGNING_SECRET` | Request signing secret                                                                     |
-| `SUPERADMINS`          | Comma-separated Slack user IDs seeded as global admins                                     |
+| `DATABASE_URL`         | PostgreSQL connection URL (required)                                                       |
+| `DATABASE_POOL_SIZE`   | Maximum PostgreSQL connections per bot instance (optional, defaults to `4`)                |
+| `SUPERADMINS`          | Comma-separated Slack user IDs allowed to manage global admins                             |
 | `LOG_CHANNEL`          | Channel ID for audit logging with full content (optional)                                  |
 | `PUBLIC_LOG_CHANNEL`   | Channel ID for public audit logging — redacted, shows actor/target/channel only (optional) |
 | `HACKCLUB_CDN_KEY`     | CDN API key for archiving deleted threads (optional)                                       |
