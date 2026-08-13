@@ -62,6 +62,9 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                   |
 | `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                  |
 | `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                     |
+| `SLACK_CLIENT_ID`      | No       | Slack app client ID used by Sign in with Slack                                                    |
+| `SLACK_CLIENT_SECRET`  | No       | Slack app client secret used by Sign in with Slack                                                |
+| `BETTER_AUTH_SECRET`   | No       | Random secret of at least 32 characters used by Better Auth                                       |
 
 6. Apply database migrations and run it:
 

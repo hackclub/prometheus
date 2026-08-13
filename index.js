@@ -9,23 +9,13 @@ import appHomeHandler, {
   actions as homeActions,
   views as homeViews,
 } from "./lib/listeners/appHome.js";
+import { startWebServer } from "./lib/web/server.js";
 
 export const userClient = new WebClient(process.env.SLACK_USER_TOKEN);
 
 let slackConnected = false;
 const receiver = new SocketModeReceiver({
   appToken: process.env.SLACK_APP_TOKEN,
-  customRoutes: [
-    {
-      path: "/health",
-      method: "GET",
-      handler: (_req, res) => {
-        const healthy = slackConnected && receiver.client.websocket?.isActive();
-        res.writeHead(healthy ? 200 : 503, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ status: healthy ? "ok" : "disconnected" }));
-      },
-    },
-  ],
 });
 
 receiver.client.on("connected", () => {
@@ -77,6 +67,17 @@ for (const v of homeViews) {
 }
 
 (async () => {
-  await app.start();
-  console.log(`fire stolen, legs broken`);
+  const server = startWebServer({
+    botClient: app.client,
+    client: userClient,
+    isHealthy: () => slackConnected && receiver.client.websocket?.isActive(),
+  });
+
+  try {
+    await app.start();
+    console.log(`fire stolen, legs broken; web dashboard listening on ${server.url}`);
+  } catch (error) {
+    server.stop();
+    throw error;
+  }
 })();
