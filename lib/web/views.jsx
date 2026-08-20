@@ -351,10 +351,7 @@ export function LandingPage({ error }) {
   return (
     <AuthLayout title="Sign in">
       <h1>Configure Prometheus</h1>
-      <p>
-        API keys for the channels you manage. Mint one, and your scripts can delete messages through
-        Prometheus with the same audit trail as the Slack shortcut.
-      </p>
+      <p>Customize how Prometheus behaves in your channels</p>
       {error && <p class="error">{error}</p>}
       <a class="button signin" href="/auth/slack">
         <SlackMark /> Sign in with Slack
