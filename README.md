@@ -38,6 +38,34 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
 
+## Web API
+
+Prometheus offers an web API to programmatically execute moderation actions. You can use this API how you see fit, common use cases include automod bots, cleaning up certain bot messes, or anything to your hearts content.
+
+Keys are scoped to **one channel and one user**. You can hold up to five keys at once, counted across every channel; a key only ever works in the channel it was made for, and it explodes the moment its owner loses their channel manager role. Any actions done via API keys is still logged in the same way as if the user had done it themselves.
+
+```bash
+curl -X POST https://prometheus.hackclub.com/api/v1/messages/delete \
+  -H "Authorization: Bearer $PROMETHEUS_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"ts":"1699999999.123456","reason":"spam"}'
+```
+
+```json
+{ "ok": true, "channel": "C0123ABCD", "deleted": ["1699999999.123456"], "failed": [] }
+```
+
+| Field    | Required | Notes                                           |
+| -------- | -------- | ----------------------------------------------- |
+| `ts`     | Yes      | One message timestamp, or an array of up to 50  |
+| `reason` | Yes      | Up to 500 characters, recorded in the audit log |
+
+A `200` means the request was accepted, not that every message was deleted, so check `deleted` and `failed`, where each failure carries the Slack error (`message_not_found`, `cant_delete_message`).
+
+Other statuses: `400` malformed request, `401` missing or invalid key, `403` no permission, `413` request body over 64 KB, `429` over the rate limit of 60 requests per minute.
+
+`GET /api/v1/key` just returns a key's metadata, which is handy for checking the status of a key.
+
 ## Setup
 
 > **⚠️ Workspace admin perms required.** Only cloning the repo and installing the Slack app is **not** enough. Almost every moderation feature (delete message, destroy thread, timeout/kick, move members, ban enforcement, clear embeds, and similar) runs through `SLACK_USER_TOKEN` and **will not work** unless that token is a User OAuth token (`xoxp`) from a **workspace admin**. Without it, only trivial commands like `ping`, `coin`, and `help` work.
@@ -48,23 +76,25 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 4. Create an app-level token with `connections:write` (for Socket Mode!).
 5. Fill out your `.env`, check the `.env.example` for reference. Here's a bit more detailed rundown of what to expect
 
-| Variable               | Required | Purpose                                                                                           |
-| ---------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                  |
-| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions        |
-| `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                   |
-| `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                  |
-| `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)               |
-| `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                         |
-| `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                   |
-| `LOG_CHANNEL`          | No       | Channel ID for **private** audit logs which includes full message content and CDN transcripts     |
-| `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel |
-| `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                   |
-| `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                  |
-| `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                     |
-| `SLACK_CLIENT_ID`      | No       | Slack app client ID used by Sign in with Slack                                                    |
-| `SLACK_CLIENT_SECRET`  | No       | Slack app client secret used by Sign in with Slack                                                |
-| `BETTER_AUTH_SECRET`   | No       | Random secret of at least 32 characters used by Better Auth                                       |
+| Variable               | Required | Purpose                                                                                            |
+| ---------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                   |
+| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions         |
+| `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                    |
+| `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                   |
+| `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)                |
+| `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                          |
+| `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                    |
+| `LOG_CHANNEL`          | API      | Channel ID for **private** audit logs which includes full message content and CDN transcripts      |
+| `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel  |
+| `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                    |
+| `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                   |
+| `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                      |
+| `SLACK_CLIENT_ID`      | No       | Slack app client ID used by Sign in with Slack                                                     |
+| `SLACK_CLIENT_SECRET`  | No       | Slack app client secret used by Sign in with Slack                                                 |
+| `BETTER_AUTH_SECRET`   | No       | Random secret of at least 32 characters used by Better Auth                                        |
+| `DASHBOARD_BASE_URL`   | No       | Public HTTPS origin the dashboard and API are served from (e.g. `https://prometheus.hackclub.com`) |
+| `PORT`                 | No       | Port the dashboard and API listen on (defaults to 3000)                                            |
 
 6. Apply database migrations and run it:
 

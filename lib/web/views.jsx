@@ -1,5 +1,50 @@
 /** @jsxImportSource hono/jsx */
 
+import { sectionCount, sectionPath, visibleGroups } from "./sections.js";
+
+export const roleLabels = {
+  global: "Global admin",
+  manager: "Channel manager",
+  moderator: "Channel moderator",
+  workspace: "Workspace admin",
+};
+
+const statusMessages = {
+  "key-revoked": "API key revoked.",
+};
+
+function Lock() {
+  return (
+    <svg
+      class="glyph"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.4"
+      aria-hidden="true"
+    >
+      <rect x="3.2" y="7" width="9.6" height="6.6" rx="1" />
+      <path d="M5.5 7V5a2.5 2.5 0 015 0v2" />
+    </svg>
+  );
+}
+
+function Caret() {
+  return (
+    <svg
+      class="glyph"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.4"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M4 6.5L8 10.5l4-4" />
+    </svg>
+  );
+}
+
 function SlackMark() {
   return (
     <svg class="slack-mark" viewBox="0 0 127 127" aria-hidden="true">
@@ -23,6 +68,16 @@ function SlackMark() {
   );
 }
 
+function ChannelName({ channel }) {
+  if (!channel) return <span>No channel</span>;
+  return (
+    <>
+      {channel.is_private ? <Lock /> : "#"}
+      {channel.name}
+    </>
+  );
+}
+
 function Brand() {
   return (
     <a class="brand" href="/">
@@ -33,23 +88,6 @@ function Brand() {
       />
       <span>Prometheus</span>
     </a>
-  );
-}
-
-function Header({ user }) {
-  return (
-    <header>
-      <Brand />
-      {user && (
-        <div class="user">
-          {user.image && <img class="avatar" src={user.image} alt="" />}
-          <span>{user.name}</span>
-          <form class="logout" action="/auth/logout" method="post">
-            <button type="submit">Sign out</button>
-          </form>
-        </div>
-      )}
-    </header>
   );
 }
 
@@ -68,6 +106,168 @@ function Document({ title, bodyClass, children }) {
   );
 }
 
+function ChannelPicker() {
+  return (
+    <form class="picker" action="/" method="get">
+      <label class="label" for="channel-picker">
+        Open any channel
+      </label>
+      <div>
+        <input
+          id="channel-picker"
+          name="channel"
+          placeholder="Slack link or channel ID"
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Open</button>
+      </div>
+    </form>
+  );
+}
+
+function ChannelSwitcher({ canSelectAny, channels, selectedChannel }) {
+  return (
+    <details class="menu">
+      <summary>
+        <span class="menu-name">
+          <b>
+            <ChannelName channel={selectedChannel} />
+          </b>
+          <span class="menu-hint"> · Change</span>
+        </span>
+        <span class="menu-caret">
+          <Caret />
+        </span>
+      </summary>
+      <div class="menu-panel">
+        <p class="label">Your channels</p>
+        {channels.length > 0 ? (
+          <nav class="menu-list">
+            {channels.map((channel) => {
+              const active = channel.channel_id === selectedChannel?.channel_id;
+              return (
+                <a
+                  class={active ? "menu-item active" : "menu-item"}
+                  href={sectionPath(channel.channel_id, "")}
+                  aria-current={active ? "true" : undefined}
+                >
+                  <span class="ellipsis">
+                    <ChannelName channel={channel} />
+                  </span>
+                  <em>{roleLabels[channel.role] || "Member"}</em>
+                </a>
+              );
+            })}
+          </nav>
+        ) : (
+          <p class="menu-note">You do not manage any channels yet.</p>
+        )}
+        {canSelectAny && <ChannelPicker />}
+      </div>
+    </details>
+  );
+}
+
+function ProfileMenu({ user, permissions }) {
+  return (
+    <details class="menu profile">
+      <summary>
+        {user.image ? (
+          <img class="avatar" src={user.image} alt="" />
+        ) : (
+          <span class="avatar avatar-blank" aria-hidden="true"></span>
+        )}
+        <span class="menu-name">{user.name}</span>
+        <span class="menu-caret">
+          <Caret />
+        </span>
+      </summary>
+      <div class="menu-panel menu-panel-narrow">
+        <p class="label">Signed in as</p>
+        <p class="menu-identity">
+          <b>{user.name}</b>
+          {permissions.primaryRole}
+        </p>
+        <form class="menu-form" action="/auth/logout" method="post">
+          <button class="button-quiet" type="submit">
+            Sign out
+          </button>
+        </form>
+      </div>
+    </details>
+  );
+}
+
+function Topbar({ canSelectAny, channelUrl, permissions, selectedChannel, user }) {
+  return (
+    <header class="topbar">
+      <Brand />
+      <div class="topbar-actions">
+        {channelUrl && (
+          <a class="slack-link" href={channelUrl}>
+            Open in Slack ↗
+          </a>
+        )}
+        <ChannelSwitcher
+          canSelectAny={canSelectAny}
+          channels={permissions.channels}
+          selectedChannel={selectedChannel}
+        />
+        <ProfileMenu user={user} permissions={permissions} />
+      </div>
+    </header>
+  );
+}
+
+function Sidebar({ activeSlug, channel }) {
+  return (
+    <aside class="sidebar" aria-label="Channel settings">
+      {visibleGroups(channel).map(({ label, items }) => (
+        <details class="nav-group" open>
+          <summary>
+            <span class="label">{label}</span>
+            <span class="menu-caret">
+              <Caret />
+            </span>
+          </summary>
+          <nav>
+            {items.map((item) => {
+              const active = item.slug === activeSlug;
+              return (
+                <a
+                  class={active ? "nav-item active" : "nav-item"}
+                  href={sectionPath(channel.channel_id, item.slug)}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </nav>
+        </details>
+      ))}
+    </aside>
+  );
+}
+
+function Notices({ error, status }) {
+  return (
+    <>
+      {statusMessages[status] && (
+        <p class="notice success" role="status">
+          {statusMessages[status]}
+        </p>
+      )}
+      {error && (
+        <p class="notice failure" role="alert">
+          {error}
+        </p>
+      )}
+    </>
+  );
+}
+
 function AuthLayout({ title, children }) {
   return (
     <Document title={title} bodyClass="auth-page">
@@ -79,23 +279,14 @@ function AuthLayout({ title, children }) {
   );
 }
 
-function DashboardLayout({ title, user, children }) {
-  return (
-    <Document title={title}>
-      <div class="shell">
-        <Header user={user} />
-        {children}
-        <footer>:3</footer>
-      </div>
-    </Document>
-  );
-}
-
 export function LandingPage({ error }) {
   return (
     <AuthLayout title="Sign in">
       <h1>Configure Prometheus</h1>
-      <p>Sign in with Slack to continue.</p>
+      <p>
+        API keys for the channels you manage. Mint one, and your scripts can delete messages through
+        Prometheus with the same audit trail as the Slack shortcut.
+      </p>
       {error && <p class="error">{error}</p>}
       <a class="button signin" href="/auth/slack">
         <SlackMark /> Sign in with Slack
@@ -106,98 +297,78 @@ export function LandingPage({ error }) {
 
 export function ErrorPage() {
   return (
-    <AuthLayout title="Sign-in error">
-      <h1>Sign-in failed</h1>
+    <AuthLayout title="Something broke">
+      <h1>That did not load</h1>
       <p class="error">
-        Try again. If this continues, ask a Prometheus admin to check the service.
+        Try again. If it keeps failing, ask a Prometheus admin to check the service.
       </p>
-      <a class="button" href="/">
-        Return to sign in
+      <a class="button button-quiet" href="/">
+        Back to the dashboard
       </a>
     </AuthLayout>
   );
 }
 
-const statusMessages = {
-  "anchor-message-saved": "Anchored message published.",
-  "anchor-nps-saved": "NPS survey published.",
-  "anchor-poll-saved": "Poll published.",
-  "anchor-removed": "Anchor removed.",
-  "anchor-updated": "Anchor status updated.",
-  "embed-removed": "Embed rule removed.",
-  "embed-saved": "Embed rule added.",
-  "welcome-removed": "Welcome message removed.",
-  "welcome-saved": "Welcome message saved.",
-};
-
-function ChannelRail({ canSelectAny, channels, selectedChannel }) {
+export function NoChannelsPage({ user, permissions, error }) {
+  const canSelectAny = permissions.globalAdmin || permissions.workspaceAdmin;
   return (
-    <aside class="channel-rail" aria-label="Configurable channels">
-      {canSelectAny && (
-        <form class="channel-picker" action="/" method="get">
-          <label for="channel-picker">Open a channel</label>
-          <div>
-            <input
-              id="channel-picker"
-              name="channel"
-              placeholder="Slack URL or channel ID"
-              required
-            />
-            <button type="submit" aria-label="Open channel">
-              →
-            </button>
-          </div>
-        </form>
-      )}
-      <div class="rail-heading">
-        <span>Channels</span>
-        <strong>{channels.length}</strong>
-      </div>
-      <nav>
-        {channels.map((channel) => (
-          <a
-            class={
-              channel.channel_id === selectedChannel?.channel_id
-                ? "channel-link active"
-                : "channel-link"
-            }
-            href={`/?channel=${encodeURIComponent(channel.channel_id)}`}
-            aria-current={channel.channel_id === selectedChannel?.channel_id ? "page" : undefined}
-          >
-            <span class="channel-glyph">{channel.is_private ? "⌁" : "#"}</span>
-            <span class="channel-name">{channel.name}</span>
-          </a>
-        ))}
-      </nav>
-    </aside>
-  );
-}
-
-function CardHeading({ icon, title, description, state }) {
-  return (
-    <summary class="card-heading">
-      <div class="module-copy">
-        <div class="card-title-line">
-          <span class="module-icon" aria-hidden="true">
-            {icon}
-          </span>
-          <h2>{title}</h2>
-          {state && (
-            <span
-              class={state === "Active" || state === "On" ? "state-badge enabled" : "state-badge"}
-            >
-              {state}
-            </span>
+    <Document title="No channels">
+      <div class="console">
+        <Topbar
+          canSelectAny={canSelectAny}
+          channelUrl={null}
+          permissions={permissions}
+          selectedChannel={null}
+          user={user}
+        />
+        <main class="blank">
+          <p class="label">{permissions.primaryRole}</p>
+          <h1>{canSelectAny ? "Open a channel" : "Nothing to configure yet"}</h1>
+          <p class="blank-note">
+            {canSelectAny
+              ? "Paste a Slack channel link or ID and Prometheus will open its settings."
+              : "Channel settings appear here once you are a channel manager, a global admin, or a workspace admin."}
+          </p>
+          {error && (
+            <p class="notice failure" role="alert">
+              {error}
+            </p>
           )}
-        </div>
-        <p>{description}</p>
+          {canSelectAny && <ChannelPicker />}
+        </main>
       </div>
-      <span class="summary-action">Settings</span>
-    </summary>
+    </Document>
   );
 }
 
-function Field({ label, hint, children }) {
+export function Card({ children }) {
+  return <section class="card">{children}</section>;
+}
+
+export function CardHead({ title, state, live, description }) {
+  return (
+    <>
+      <h2>{title}</h2>
+      {state && <p class={live ? "card-state on" : "card-state"}>{state}</p>}
+      {description && <p class="card-note">{description}</p>}
+    </>
+  );
+}
+
+export function Stats({ rows }) {
+  return (
+    <ul class="stats">
+      {rows.map(({ label, value, dim }) => (
+        <li>
+          <span>{label}</span>
+          <b class={dim ? "value dim" : "value"}>{value}</b>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function Field({ label, hint, children }) {
   return (
     <label class="field">
       <span>{label}</span>
@@ -207,396 +378,207 @@ function Field({ label, hint, children }) {
   );
 }
 
-function AnchorOverview({ channel, anchor }) {
-  const base = `/channels/${encodeURIComponent(channel.channel_id)}/anchor`;
-  if (!anchor) {
-    return (
-      <section class="anchor-overview empty-anchor">
-        <div class="anchor-summary">
-          <span class="signal idle"></span>
-          <div>
-            <p class="eyebrow">Current anchor</p>
-            <h2>None</h2>
-          </div>
-        </div>
-        <p class="anchor-meta">Choose a module below to publish one.</p>
-      </section>
-    );
-  }
-
-  const kind =
-    anchor.type === "nps" ? "NPS survey" : anchor.type === "message" ? "Message" : "Poll";
-  const responseCount = anchor.type === "nps" ? anchor.responses.length : anchor.votes.length;
+function PageHead({ channel, section, permissions }) {
   return (
-    <section class="anchor-overview">
-      <div class="anchor-summary">
-        <span class={anchor.enabled ? "signal" : "signal idle"}></span>
-        <div>
-          <p class="eyebrow">Active {kind}</p>
-          <h2>{anchor.question}</h2>
-          <p class="anchor-meta">
-            {anchor.enabled ? "Resurfacing is on" : "Resurfacing is paused"}
-            {anchor.type !== "message" &&
-              ` · ${responseCount} response${responseCount === 1 ? "" : "s"}`}
-          </p>
-        </div>
-      </div>
-      <div class="overview-actions">
-        <form action={`${base}/toggle`} method="post">
-          <input type="hidden" name="enabled" value={anchor.enabled ? "false" : "true"} />
-          <button class="button-secondary" type="submit">
-            {anchor.enabled ? "Pause" : "Enable"}
-          </button>
-        </form>
-        <form action={`${base}/delete`} method="post">
-          <button class="button-danger" type="submit">
-            Remove
-          </button>
-        </form>
-      </div>
-    </section>
+    <div class="page-head">
+      <p class="crumb">
+        <ChannelName channel={channel} />
+        <b>{` · ${roleLabels[channel.role] || permissions.primaryRole}`}</b>
+      </p>
+      <h1>{section.title}</h1>
+      <p class="page-blurb">{section.blurb}</p>
+    </div>
   );
 }
 
-function AnchorMessageCard({ channel, anchor }) {
-  const current = anchor?.type === "message";
+function keyDate(seconds) {
+  if (!seconds) return "Never";
+  return new Date(Number(seconds) * 1000).toISOString().slice(0, 10);
+}
+
+function RevealedKey({ apiKey }) {
   return (
-    <details class="feature-card">
-      <CardHeading
-        icon="¶"
-        title="Anchored message"
-        description="Keep essential context pinned and resurface it as the channel moves."
-        state={current ? "Active" : null}
+    <Card>
+      <CardHead
+        title="Copy your key now"
+        state="Shown once"
+        live
+        description="Prometheus stores only a hash of it. If you lose it, revoke the key and make another."
       />
-      <div class="settings-body">
-        <form
-          action={`/channels/${encodeURIComponent(channel.channel_id)}/anchor/message`}
-          method="post"
-        >
-          <Field label="Message" hint="Publishing this replaces the current anchor.">
-            <textarea
-              name="message"
-              maxlength="3000"
-              rows="5"
-              required
-              placeholder="Share the context everyone should see…"
-            >
-              {current ? anchor.question : ""}
-            </textarea>
-          </Field>
-          <button type="submit">{current ? "Replace message" : "Publish message"}</button>
-        </form>
-      </div>
-    </details>
+      <p class="secret">
+        <code>{apiKey}</code>
+      </p>
+    </Card>
   );
 }
 
-function PollCard({ channel, anchor }) {
-  const current = anchor?.type === "poll";
+function KeyList({ channel, keys }) {
+  const action = `/channels/${encodeURIComponent(channel.channel_id)}/keys`;
   return (
-    <details class="feature-card">
-      <CardHeading
-        icon="≋"
-        title="Channel poll"
-        description="Run a persistent vote in this channel."
-        state={current ? "Active" : "Off"}
+    <Card>
+      <CardHead
+        title="Your keys"
+        state={`${keys.length} key${keys.length === 1 ? "" : "s"}`}
+        live={keys.length > 0}
+        description="Keys you made for this channel. Other managers cannot see or use them."
       />
-      <div class="settings-body">
-        <form
-          action={`/channels/${encodeURIComponent(channel.channel_id)}/anchor/poll`}
-          method="post"
-        >
-          <Field label="Question">
-            <input
-              name="question"
-              maxlength="250"
-              required
-              value={current ? anchor.question : ""}
-              placeholder="What should we decide?"
-            />
-          </Field>
-          <Field label="Choices" hint="One per line. Replacing a poll resets its votes.">
-            <textarea name="choices" rows="4" required placeholder={"First option\nSecond option"}>
-              {current ? anchor.choices.map(({ text }) => text).join("\n") : ""}
-            </textarea>
-          </Field>
-          <div class="inline-fields">
-            <Field label="New choices">
-              <select name="addChoiceSetting">
-                <option
-                  value="no_one"
-                  selected={!current || anchor.add_choice_setting === "no_one"}
-                >
-                  No one
-                </option>
-                <option
-                  value="creator"
-                  selected={current && anchor.add_choice_setting === "creator"}
-                >
-                  Creator only
-                </option>
-                <option value="anyone" selected={current && anchor.add_choice_setting === "anyone"}>
-                  Anyone
-                </option>
-              </select>
-            </Field>
-            <div class="check-stack">
-              <label>
-                <input
-                  type="checkbox"
-                  name="anonymous"
-                  checked={current && Boolean(anchor.anonymous)}
-                />{" "}
-                Anonymous
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  name="multiSelect"
-                  checked={current && Boolean(anchor.multi_select)}
-                />{" "}
-                Multiple answers
-              </label>
-            </div>
-          </div>
-          <button type="submit">{current ? "Replace poll" : "Publish poll"}</button>
-        </form>
-      </div>
-    </details>
-  );
-}
-
-function NpsCard({ channel, anchor }) {
-  const current = anchor?.type === "nps";
-  const defaultQuestion = "How likely are you to recommend this channel to a friend?";
-  return (
-    <details class="feature-card">
-      <CardHeading
-        icon="10"
-        title="NPS pulse"
-        description="Collect a 1–10 score and optional feedback."
-        state={current ? "Active" : "Off"}
-      />
-      <div class="settings-body">
-        <form
-          action={`/channels/${encodeURIComponent(channel.channel_id)}/anchor/nps`}
-          method="post"
-        >
-          <Field label="Question">
-            <input
-              name="question"
-              maxlength="250"
-              required
-              value={current ? anchor.question : defaultQuestion}
-            />
-          </Field>
-          <Field label="Run for" hint="The survey closes automatically.">
-            <div class="input-suffix">
-              <input name="days" type="number" min="1" max="365" value="7" required />
-              <span>days</span>
-            </div>
-          </Field>
-          <button type="submit">{current ? "Replace survey" : "Publish survey"}</button>
-        </form>
-      </div>
-    </details>
-  );
-}
-
-function WelcomeCard({ channel, welcome }) {
-  return (
-    <details class="feature-card">
-      <CardHeading
-        icon="↳"
-        title="Welcome message"
-        description="Greet people when they join this channel."
-        state={welcome ? "On" : "Off"}
-      />
-      <div class="settings-body">
-        <form action={`/channels/${encodeURIComponent(channel.channel_id)}/welcome`} method="post">
-          <Field label="Delivery">
-            <select name="mode">
-              <option value="ephemeral" selected={!welcome || welcome.mode === "ephemeral"}>
-                Private message in channel
-              </option>
-              <option value="dm" selected={welcome?.mode === "dm"}>
-                Direct message
-              </option>
-            </select>
-          </Field>
-          <Field label="Message">
-            <textarea
-              name="message"
-              maxlength="3000"
-              rows="4"
-              required
-              placeholder="Welcome! Here’s what this channel is for…"
-            >
-              {welcome?.message || ""}
-            </textarea>
-          </Field>
-          <div class="form-actions">
-            <button type="submit">Save welcome</button>
-            {welcome && (
-              <button
-                class="button-danger"
-                type="submit"
-                formaction={`/channels/${encodeURIComponent(channel.channel_id)}/welcome/delete`}
-              >
-                Turn off
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
-    </details>
-  );
-}
-
-function ruleLabel(rule) {
-  if (rule.type === "domain") return `*.${rule.target}/*`;
-  return `${rule.target}/*`;
-}
-
-function EmbedCard({ channel, rules }) {
-  const action = `/channels/${encodeURIComponent(channel.channel_id)}/embeds`;
-  return (
-    <details class="feature-card">
-      <CardHeading
-        icon="⊘"
-        title="Blocked embeds"
-        description="Stop selected links from expanding."
-        state={`${rules.length} rule${rules.length === 1 ? "" : "s"}`}
-      />
-      <div class="settings-body">
-        {rules.length > 0 && (
-          <div class="rule-list">
-            {rules.map((rule) => (
-              <div class="rule-row">
-                <div>
-                  <span>{rule.type}</span>
-                  <code>{ruleLabel(rule)}</code>
-                </div>
-                <form action={`${action}/delete`} method="post">
-                  <input type="hidden" name="type" value={rule.type} />
-                  <input type="hidden" name="target" value={rule.target} />
-                  <button
-                    class="icon-button"
-                    type="submit"
-                    aria-label={`Remove ${ruleLabel(rule)}`}
-                  >
-                    ×
-                  </button>
-                </form>
+      {keys.length > 0 ? (
+        <div class="rules">
+          {keys.map((key) => (
+            <div class="rule">
+              <div>
+                <code>{`${key.key_prefix}…`}</code>
+                <small>
+                  {`${key.name} · created ${keyDate(key.created_at)} · last used ${keyDate(key.last_used_at)}`}
+                </small>
               </div>
-            ))}
-          </div>
-        )}
-        <form action={action} method="post">
-          <div class="inline-fields rule-builder">
-            <Field label="Rule scope">
-              <select name="type">
-                <option value="domain">Entire domain</option>
-                <option value="host">Exact host</option>
-                <option value="path">URL path</option>
-              </select>
-            </Field>
-            <Field label="Example URL">
-              <input name="url" type="url" required placeholder="https://example.com/path" />
-            </Field>
-          </div>
-          <button type="submit">Add rule</button>
-        </form>
-      </div>
-    </details>
+              <form action={`${action}/revoke`} method="post">
+                <input type="hidden" name="id" value={String(key.id)} />
+                <button
+                  class="button-remove button-small"
+                  type="submit"
+                  aria-label={`Revoke ${key.name}`}
+                >
+                  Revoke
+                </button>
+              </form>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="quiet">No keys yet. Nothing can delete messages here over the API.</p>
+      )}
+    </Card>
   );
 }
+
+function KeyUsage({ channel, baseUrl }) {
+  const endpoint = `${baseUrl}/api/v1/messages/delete`;
+  const example = [
+    `curl -X POST ${endpoint} \\`,
+    `  -H "Authorization: Bearer $PROMETHEUS_KEY" \\`,
+    `  -H "Content-Type: application/json" \\`,
+    `  -d '{"ts":"1699999999.123456","reason":"spam"}'`,
+  ].join("\n");
+
+  return (
+    <Card>
+      <CardHead
+        title="Using your key"
+        description="Send the key as a bearer token. Every deletion lands in the audit log under your name."
+      />
+      <pre class="snippet">
+        <code>{example}</code>
+      </pre>
+      <ul class="notes">
+        <li>
+          <code>ts</code> takes one message timestamp or an array of up to 50.
+        </li>
+        <li>
+          <code>reason</code> is required, up to 500 characters, and is recorded in the audit log.
+        </li>
+        <li>
+          There is no channel field: this key only ever works in{" "}
+          <b>
+            <ChannelName channel={channel} />
+          </b>
+          .
+        </li>
+        <li>
+          A 200 means the request was accepted. Check <code>deleted</code> and <code>failed</code>{" "}
+          for what actually happened to each message.
+        </li>
+        <li>
+          <code>GET {`${baseUrl}/api/v1/key`}</code> checks a key without deleting anything.
+        </li>
+      </ul>
+    </Card>
+  );
+}
+
+function ApiKeysPage({ channel, settings, createdKey, baseUrl }) {
+  const { keys, total, max, remaining } = settings.apiKeys;
+  return (
+    <>
+      {createdKey && <RevealedKey apiKey={createdKey} />}
+      <KeyList channel={channel} keys={keys} />
+      <Card>
+        <CardHead
+          title="Create a key"
+          state={`${total} of ${max} used`}
+          live={remaining > 0}
+          description="Name it after whatever will hold it, so a leaked key is easy to trace. The
+            limit counts every channel, not just this one."
+        />
+        {remaining > 0 ? (
+          <form action={`/channels/${encodeURIComponent(channel.channel_id)}/keys`} method="post">
+            <Field label="Name" hint="For example: modbot, or airtable cleanup script.">
+              <input name="name" required maxlength="60" placeholder="modbot" autocomplete="off" />
+            </Field>
+            <div class="form-actions">
+              <button type="submit">Create key</button>
+            </div>
+          </form>
+        ) : (
+          <p class="quiet">
+            You are holding all {max} of your keys. Revoke one — here or in another channel — to
+            make room.
+          </p>
+        )}
+      </Card>
+      <KeyUsage baseUrl={baseUrl} channel={channel} />
+    </>
+  );
+}
+
+const pages = {
+  "": ApiKeysPage,
+};
 
 export function DashboardPage({
   user,
   teamId,
   permissions,
+  section,
   selectedChannel,
   settings,
   status,
   error,
+  createdKey,
+  baseUrl,
 }) {
-  const { channels, globalAdmin, primaryRole, workspaceAdmin } = permissions;
-  const canSelectAny = globalAdmin || workspaceAdmin;
-  const channelUrl = selectedChannel
-    ? `https://app.slack.com/client/${encodeURIComponent(teamId)}/${encodeURIComponent(selectedChannel.channel_id)}`
-    : null;
+  const Section = pages[section.slug];
+  const channelUrl = `https://app.slack.com/client/${encodeURIComponent(teamId)}/${encodeURIComponent(selectedChannel.channel_id)}`;
+  const title = section.slug
+    ? `${section.title} · #${selectedChannel.name}`
+    : `#${selectedChannel.name}`;
+  // One section means the sidebar would just point at the page you are already on.
+  const solo = sectionCount(selectedChannel) < 2;
   return (
-    <DashboardLayout title={selectedChannel ? `#${selectedChannel.name}` : "Dashboard"} user={user}>
-      <div class="dashboard-layout">
-        <ChannelRail
-          canSelectAny={canSelectAny}
-          channels={channels}
+    <Document title={title}>
+      <div class="console">
+        <Topbar
+          canSelectAny={permissions.globalAdmin || permissions.workspaceAdmin}
+          channelUrl={channelUrl}
+          permissions={permissions}
           selectedChannel={selectedChannel}
+          user={user}
         />
-        <main class="dashboard-main">
-          {!selectedChannel ? (
-            <div class="empty dashboard-empty">
-              <h1>{canSelectAny ? "Choose a channel" : "No configurable channels"}</h1>
-              <p>
-                {canSelectAny
-                  ? "Paste a Slack channel URL or channel ID in the sidebar to configure it."
-                  : "You need a channel manager role, global admin role, or workspace admin access before channel settings appear here."}
-              </p>
-              {error && (
-                <div class="notice failure" role="alert">
-                  {error}
-                </div>
-              )}
-            </div>
-          ) : (
-            <>
-              <div class="channel-header">
-                <div>
-                  <p class="eyebrow">Channel settings · {primaryRole}</p>
-                  <h1>
-                    <span>{selectedChannel.is_private ? "⌁" : "#"}</span>
-                    {selectedChannel.name}
-                  </h1>
-                </div>
-                <a class="button button-secondary slack-link" href={channelUrl}>
-                  Open in Slack ↗
-                </a>
-              </div>
-              {statusMessages[status] && (
-                <div class="notice success" role="status">
-                  {statusMessages[status]}
-                </div>
-              )}
-              {error && (
-                <div class="notice failure" role="alert">
-                  {error}
-                </div>
-              )}
-              {selectedChannel.canAnchor && (
-                <AnchorOverview channel={selectedChannel} anchor={settings.anchor} />
-              )}
-              <div class="card-grid">
-                {selectedChannel.canAnchor && (
-                  <AnchorMessageCard channel={selectedChannel} anchor={settings.anchor} />
-                )}
-                {selectedChannel.canAnchor && (
-                  <PollCard channel={selectedChannel} anchor={settings.anchor} />
-                )}
-                {selectedChannel.canAnchor && (
-                  <NpsCard channel={selectedChannel} anchor={settings.anchor} />
-                )}
-                {selectedChannel.canManage && (
-                  <WelcomeCard channel={selectedChannel} welcome={settings.welcome} />
-                )}
-                {selectedChannel.canManage && (
-                  <EmbedCard channel={selectedChannel} rules={settings.embedRules} />
-                )}
-              </div>
-            </>
-          )}
-        </main>
+        <div class={solo ? "workspace solo" : "workspace"}>
+          {!solo && <Sidebar activeSlug={section.slug} channel={selectedChannel} />}
+          <main class="canvas">
+            <PageHead channel={selectedChannel} permissions={permissions} section={section} />
+            <Notices error={error} status={status} />
+            <Section
+              baseUrl={baseUrl}
+              channel={selectedChannel}
+              createdKey={createdKey}
+              permissions={permissions}
+              settings={settings}
+            />
+          </main>
+        </div>
       </div>
-    </DashboardLayout>
+    </Document>
   );
 }
