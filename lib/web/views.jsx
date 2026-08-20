@@ -268,13 +268,81 @@ function Notices({ error, status }) {
   );
 }
 
+function FlameFilters() {
+  return (
+    <svg class="flame-defs" aria-hidden="true" focusable="false">
+      <filter
+        id="flame-churn"
+        x="-30%"
+        y="-30%"
+        width="160%"
+        height="160%"
+        color-interpolation-filters="sRGB"
+      >
+        <feTurbulence type="fractalNoise" baseFrequency="0.021 0.0045" numOctaves="4" seed="17" />
+        <feDisplacementMap
+          in="SourceGraphic"
+          scale="96"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+      <filter
+        id="flame-churn-fine"
+        x="-30%"
+        y="-30%"
+        width="160%"
+        height="160%"
+        color-interpolation-filters="sRGB"
+      >
+        <feTurbulence type="fractalNoise" baseFrequency="0.055 0.012" numOctaves="3" seed="43" />
+        <feDisplacementMap
+          in="SourceGraphic"
+          scale="46"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
+  );
+}
+
+function Flame() {
+  return (
+    <div class="flame" aria-hidden="true">
+      <FlameFilters />
+      <span class="flame-glow" />
+      <span class="flame-plume flame-plume-far" />
+      <span class="flame-plume flame-plume-mid" />
+      <span class="flame-plume flame-plume-near" />
+      <span class="flame-tongue flame-tongue-a" />
+      <span class="flame-tongue flame-tongue-b" />
+      <span class="flame-tongue flame-tongue-c" />
+      <span class="flame-tongue flame-tongue-d" />
+      <span class="flame-tongue flame-tongue-e" />
+      <span class="flame-tongue flame-tongue-f" />
+      <span class="flame-bed flame-bed-a" />
+      <span class="flame-bed flame-bed-b" />
+      <span class="flame-heart" />
+      <span class="flame-spark flame-spark-a" />
+      <span class="flame-spark flame-spark-b" />
+      <span class="flame-spark flame-spark-c" />
+      <span class="flame-spark flame-spark-d" />
+      <span class="flame-spark flame-spark-e" />
+    </div>
+  );
+}
+
 function AuthLayout({ title, children }) {
   return (
     <Document title={title} bodyClass="auth-page">
-      <main class="auth-shell">
+      <Flame />
+      <div class="auth-frame">
         <Brand />
-        <section class="auth-panel">{children}</section>
-      </main>
+        <main class="auth-shell">
+          <section class="auth-panel">{children}</section>
+        </main>
+      </div>
     </Document>
   );
 }
