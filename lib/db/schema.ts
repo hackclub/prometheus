@@ -163,3 +163,24 @@ export const anchorNpsResponses = pgTable(
     uniqueIndex("anchor_nps_responses_poll_user").on(table.pollId, table.userId),
   ],
 );
+
+export const channelApiKeys = pgTable(
+  "channel_api_keys",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    channelId: text("channel_id").notNull(),
+    userId: text("user_id").notNull(),
+    name: text().notNull(),
+    keyPrefix: text("key_prefix").notNull(),
+    keyHash: text("key_hash").notNull(),
+    createdAt: bigint("created_at", { mode: "number" }).notNull().default(epoch),
+    lastUsedAt: bigint("last_used_at", { mode: "number" }),
+    revokedAt: bigint("revoked_at", { mode: "number" }),
+  },
+  (table) => [
+    uniqueIndex("channel_api_keys_hash").on(table.keyHash),
+    index("channel_api_keys_owner")
+      .on(table.userId, table.channelId)
+      .where(sql`${table.revokedAt} IS NULL`),
+  ],
+);

@@ -41,7 +41,7 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `canAnchor` — `canManage` OR workspaceAdmin
 - `SUPERADMINS` grants access to the `/pro admin` command; it does not automatically insert rows into `global_admins`
 
-**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, and `anchor_nps_responses`.
+**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, and `channel_api_keys`.
 
 All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
 
@@ -50,6 +50,48 @@ All exported database functions are asynchronous and must be awaited. Multi-row 
 **Moderation** (`lib/moderation.js`): Wraps Slack's undocumented enterprise moderation APIs (`moderation.thread.hide`, `moderation.locks.create/remove`) using a browser token (`xoxc-`) and session cookie. Optional — when credentials are not configured, the destroy thread shortcut falls back to full delete only.
 
 **Rate limiter** (`lib/ratelimiter.js`): Handles Slack API rate limits with exponential backoff. Used by `lib/purge.js` for batch message deletion.
+
+**Web dashboard and API** (`lib/web/`): A Hono app served by `lib/web/server.js`, mounted by
+`index.js` alongside the bot and also runnable on its own with `bun run start:web`. Sign-in is
+Slack OAuth through Better Auth (`auth.js`), restricted to the workspace the bot is installed in.
+
+- `app.js` — routing, security headers, and same-origin checks on every session mutation
+- `api.js` — the public, bearer-authenticated `/api/v1` router
+- `apiKeys.js` — key minting, hashing, and revocation
+- `permissions.js` — maps a Slack user to the channels they can configure
+- `sections.js` — the single source of truth for dashboard navigation
+- `views.jsx` — hono/jsx server-rendered pages; `dashboard.css` is the only asset
+
+The dashboard is deliberately scoped to API keys right now. The rest of the first pass is parked,
+not deleted: nav entries live in `PARKED` in `sections.js`, page components in `views.parked.jsx`,
+and their mutation helpers in `channelSettings.js`. Bringing a section back means moving its `PARKED`
+entry into `NAV`, adding it to the `pages` map in `views.jsx`, and re-registering its POST routes in
+`app.js`. Nothing imports `views.parked.jsx` or `channelSettings.js` in the meantime.
+
+There is no JavaScript on the dashboard — the CSP forbids it — so every interaction is a plain form
+POST. Key creation renders its response directly instead of redirecting, because the plaintext key
+exists only for that one response.
+
+**API keys** (`lib/web/api.js`): `POST /api/v1/messages/delete` deletes messages programmatically.
+Keys are scoped to one channel and one owner, stored only as a SHA-256 hash, and re-checked against
+`canManage` on every request, so demoting an owner disables their keys without an explicit
+revocation. Deletions reuse `logDelete`/`publicLogDelete` and are attributed to the key's owner.
+Per-key throughput is capped at 60 requests per minute in memory, and batches at 50 messages.
+
+Two properties are load-bearing. `LOG_CHANNEL` is mandatory for the endpoint: `logDelete` treats an
+unset channel as a successful no-op, so without this guard the API would delete messages with no
+record at all. And authorization is rechecked per message rather than once per request, so revoking a
+key or demoting its owner halts a batch already in flight. Request bodies are counted in bytes as
+they stream and capped at 64 KB, because `Content-Length` is absent under chunked encoding. The
+`reason` has its angle brackets stripped — it lands in a mrkdwn block, where `<!channel>` would
+otherwise fire a real broadcast ping in the audit channel.
+
+A user may hold `MAX_API_KEYS_PER_USER` (5) active keys in total, across every channel, not per
+channel. `createChannelApiKey` counts and inserts inside one transaction behind an advisory lock on
+the user id, so concurrent creations cannot both pass the check; it returns `null` at the cap and
+`createApiKey` turns that into a user-facing error. The per-key rate limit is a loose temporary
+guard, not a quota: Slack's tier 3 limit is the real ceiling and key holders already have the same
+power via the Slack shortcut.
 
 ## Environment Variables
 
@@ -67,6 +109,11 @@ All exported database functions are asynchronous and must be awaited. Multi-row 
 | `HACKCLUB_CDN_KEY`     | CDN API key for archiving deleted threads (optional)                                       |
 | `SLACK_BROWSER_TOKEN`  | Browser token (xoxc) for undocumented moderation APIs (optional)                           |
 | `SLACK_COOKIE`         | Session cookie (`d=` value) paired with browser token (optional)                           |
+| `SLACK_CLIENT_ID`      | Slack app client ID for dashboard sign-in (optional)                                       |
+| `SLACK_CLIENT_SECRET`  | Slack app client secret for dashboard sign-in (optional)                                   |
+| `BETTER_AUTH_SECRET`   | Random 32+ character secret for Better Auth sessions (optional)                            |
+| `DASHBOARD_BASE_URL`   | Public HTTPS origin the dashboard and API are served from (optional)                       |
+| `PORT`                 | Port the web server listens on (optional, defaults to `3000`)                              |
 
 ## Adding a New Command
 

@@ -1,0 +1,2 @@
+DROP INDEX "channel_api_keys_owner";--> statement-breakpoint
+CREATE INDEX "channel_api_keys_owner" ON "channel_api_keys" USING btree ("user_id","channel_id") WHERE "channel_api_keys"."revoked_at" IS NULL;
