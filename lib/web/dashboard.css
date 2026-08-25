@@ -402,30 +402,6 @@ summary::-webkit-details-marker {
   width: 100%;
 }
 
-.picker {
-  border-top: 1px solid var(--line);
-  margin-top: var(--s3);
-  padding-top: var(--s3);
-}
-
-.picker .label {
-  font-size: 0.68rem;
-  margin-bottom: var(--s2);
-}
-
-.picker div {
-  display: flex;
-  gap: var(--s2);
-}
-
-.picker input {
-  font-size: 0.82rem;
-}
-
-.picker button {
-  flex: 0 0 auto;
-}
-
 /* Sidebar
    ------------------------------------------------------------------------- */
 
@@ -640,6 +616,22 @@ summary::-webkit-details-marker {
 
 .card h2 {
   font-size: 1.05rem;
+}
+
+.card-head {
+  align-items: start;
+  display: flex;
+  gap: var(--s4);
+  justify-content: space-between;
+}
+
+.card-head > :first-child {
+  min-width: 0;
+}
+
+.card-head button,
+.card-head .button {
+  flex: 0 0 auto;
 }
 
 .card-state {
@@ -885,6 +877,121 @@ summary::-webkit-details-marker {
   font-size: 0.78rem;
 }
 
+.key-usage {
+  border-top: 1px solid var(--line);
+  margin-top: var(--s5);
+  padding-top: var(--s5);
+}
+
+.key-usage h3 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Modal: Popover API for create, .is-open after the key exists.
+   No script — the CSP forbids it. */
+.modal {
+  background: transparent;
+  border: 0;
+  height: 100%;
+  inset: 0;
+  margin: 0;
+  max-height: none;
+  max-width: none;
+  overflow: auto;
+  padding: var(--s4);
+  position: fixed;
+  width: 100%;
+  z-index: 50;
+}
+
+.modal:popover-open,
+.modal.is-open {
+  animation: modal-in 180ms ease-out;
+  display: grid;
+  align-items: safe center;
+  justify-items: center;
+}
+
+.modal.is-open {
+  background: rgb(14 13 12 / 72%);
+}
+
+.modal::backdrop {
+  background: rgb(14 13 12 / 72%);
+}
+
+body:has(.modal:popover-open),
+body:has(.modal.is-open) {
+  overflow: hidden;
+}
+
+.modal-dismiss {
+  inset: 0;
+  position: absolute;
+}
+
+.modal-panel {
+  animation: modal-panel-in 180ms ease-out;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 45%);
+  max-height: min(90vh, 52rem);
+  overflow-y: auto;
+  padding: var(--s5);
+  position: relative;
+  width: min(100%, 28rem);
+  z-index: 1;
+}
+
+.modal-panel-wide {
+  width: min(100%, 42rem);
+}
+
+.modal-panel h2 {
+  font-size: 1.2rem;
+}
+
+.modal-panel form {
+  display: grid;
+  gap: var(--s4);
+  margin-top: var(--s5);
+}
+
+.modal-panel .form-actions {
+  margin-top: 0;
+}
+
+.modal-panel > .form-actions {
+  margin-top: var(--s5);
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Blank slate and sign-in
    ------------------------------------------------------------------------- */
 
@@ -904,12 +1011,6 @@ summary::-webkit-details-marker {
   color: var(--muted);
   line-height: 1.6;
   margin: var(--s3) 0 var(--s5);
-}
-
-.blank .picker {
-  border: 0;
-  margin: 0;
-  padding: 0;
 }
 
 .flame {
@@ -1417,6 +1518,19 @@ summary::-webkit-details-marker {
   .field-row,
   .field-row-rule {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card-head {
+    align-items: center;
+    gap: var(--s3);
+  }
+
+  .modal {
+    padding: var(--s3);
+  }
+
+  .modal-panel {
+    padding: var(--s4);
   }
 
   .check-stack {
