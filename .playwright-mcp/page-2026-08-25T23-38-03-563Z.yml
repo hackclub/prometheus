@@ -1,0 +1,222 @@
+- generic [ref=f3e2]:
+  - banner [ref=f3e3]:
+    - link "Prometheus" [ref=f3e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=f3e6]:
+      - group [ref=f3e7]:
+        - generic "#dns" [active] [ref=f3e8] [cursor=pointer]
+        - generic [ref=f3e37]:
+          - paragraph [ref=f3e38]: Your channels
+          - navigation [ref=f3e39]:
+            - link "#3d-printing Global admin" [ref=f3e40] [cursor=pointer]:
+              - /url: /c/CLQRM7F9C
+              - generic [ref=f3e41]: "#3d-printing"
+              - emphasis [ref=f3e42]: Global admin
+            - link "#amas Global admin" [ref=f3e43] [cursor=pointer]:
+              - /url: /c/C03QPB0SU3V
+              - generic [ref=f3e44]: "#amas"
+              - emphasis [ref=f3e45]: Global admin
+            - link "#bayarea Global admin" [ref=f3e46] [cursor=pointer]:
+              - /url: /c/C014M6C0CNA
+              - generic [ref=f3e47]: "#bayarea"
+              - emphasis [ref=f3e48]: Global admin
+            - link "#bot-spam Global admin" [ref=f3e49] [cursor=pointer]:
+              - /url: /c/C0P5NE354
+              - generic [ref=f3e50]: "#bot-spam"
+              - emphasis [ref=f3e51]: Global admin
+            - link "#C0B2YRXE71B Global admin" [ref=f3e52] [cursor=pointer]:
+              - /url: /c/C0B2YRXE71B
+              - generic [ref=f3e53]: "#C0B2YRXE71B"
+              - emphasis [ref=f3e54]: Global admin
+            - link "#C0BH46HHZ1A Global admin" [ref=f3e55] [cursor=pointer]:
+              - /url: /c/C0BH46HHZ1A
+              - generic [ref=f3e56]: "#C0BH46HHZ1A"
+              - emphasis [ref=f3e57]: Global admin
+            - link "#code Global admin" [ref=f3e58] [cursor=pointer]:
+              - /url: /c/C0EA9S0A0
+              - generic [ref=f3e59]: "#code"
+              - emphasis [ref=f3e60]: Global admin
+            - link "#community Global admin" [ref=f3e61] [cursor=pointer]:
+              - /url: /c/C01D7AHKMPF
+              - generic [ref=f3e62]: "#community"
+              - emphasis [ref=f3e63]: Global admin
+            - link "#community-announcements Global admin" [ref=f3e64] [cursor=pointer]:
+              - /url: /c/C08KQ9DUJUX
+              - generic [ref=f3e65]: "#community-announcements"
+              - emphasis [ref=f3e66]: Global admin
+            - link "#confessions Global admin" [ref=f3e67] [cursor=pointer]:
+              - /url: /c/CNMU9L92Q
+              - generic [ref=f3e68]: "#confessions"
+              - emphasis [ref=f3e69]: Global admin
+            - link "•#dns Channel manager" [ref=f3e70] [cursor=pointer]:
+              - /url: /c/CS8TQ86GN
+              - generic [ref=f3e71]: •#dns
+              - emphasis [ref=f3e72]: Channel manager
+            - link [ref=f3e73] [cursor=pointer]:
+              - /url: /c/C0BAHBV008Z
+              - generic [ref=f3e74]: draculatestsmeow
+              - emphasis [ref=f3e78]: Global admin
+            - link "#electronics Global admin" [ref=f3e79] [cursor=pointer]:
+              - /url: /c/C056AMWSFKJ
+              - generic [ref=f3e80]: "#electronics"
+              - emphasis [ref=f3e81]: Global admin
+            - link "#eps-conduit Global admin" [ref=f3e82] [cursor=pointer]:
+              - /url: /c/C0A2BPB7202
+              - generic [ref=f3e83]: "#eps-conduit"
+              - emphasis [ref=f3e84]: Global admin
+            - link "#evans-only Global admin" [ref=f3e85] [cursor=pointer]:
+              - /url: /c/C0ABQD41J3F
+              - generic [ref=f3e86]: "#evans-only"
+              - emphasis [ref=f3e87]: Global admin
+            - link "#free-stuff Global admin" [ref=f3e88] [cursor=pointer]:
+              - /url: /c/C067WHE64H5
+              - generic [ref=f3e89]: "#free-stuff"
+              - emphasis [ref=f3e90]: Global admin
+            - link "#hardware Global admin" [ref=f3e91] [cursor=pointer]:
+              - /url: /c/C6C026NHJ
+              - generic [ref=f3e92]: "#hardware"
+              - emphasis [ref=f3e93]: Global admin
+            - link "#help Global admin" [ref=f3e94] [cursor=pointer]:
+              - /url: /c/C07TM4C0AQ5
+              - generic [ref=f3e95]: "#help"
+              - emphasis [ref=f3e96]: Global admin
+            - link "#help-wanted Global admin" [ref=f3e97] [cursor=pointer]:
+              - /url: /c/C06LF2GALSZ
+              - generic [ref=f3e98]: "#help-wanted"
+              - emphasis [ref=f3e99]: Global admin
+            - link "#hq-engineering Channel manager" [ref=f3e100] [cursor=pointer]:
+              - /url: /c/C05SVRTCDGV
+              - generic [ref=f3e101]: "#hq-engineering"
+              - emphasis [ref=f3e102]: Channel manager
+            - link "#india Global admin" [ref=f3e103] [cursor=pointer]:
+              - /url: /c/C07BRLYTSSK
+              - generic [ref=f3e104]: "#india"
+              - emphasis [ref=f3e105]: Global admin
+            - link "#insider-trading Global admin" [ref=f3e106] [cursor=pointer]:
+              - /url: /c/C09975YPFPW
+              - generic [ref=f3e107]: "#insider-trading"
+              - emphasis [ref=f3e108]: Global admin
+            - link "#jmeow-tests-prometheus Global admin" [ref=f3e109] [cursor=pointer]:
+              - /url: /c/C0APWEWLPAM
+              - generic [ref=f3e110]: "#jmeow-tests-prometheus"
+              - emphasis [ref=f3e111]: Global admin
+            - link "#lachlan-dosnt-know-what-to-call-this Global admin" [ref=f3e112] [cursor=pointer]:
+              - /url: /c/C09UWCRGQJ3
+              - generic [ref=f3e113]: "#lachlan-dosnt-know-what-to-call-this"
+              - emphasis [ref=f3e114]: Global admin
+            - link "#leaders Global admin" [ref=f3e115] [cursor=pointer]:
+              - /url: /c/C02PA5G01ND
+              - generic [ref=f3e116]: "#leaders"
+              - emphasis [ref=f3e117]: Global admin
+            - link "#lounge Global admin" [ref=f3e118] [cursor=pointer]:
+              - /url: /c/C0266FRGV
+              - generic [ref=f3e119]: "#lounge"
+              - emphasis [ref=f3e120]: Global admin
+            - link "#macondo-help Global admin" [ref=f3e121] [cursor=pointer]:
+              - /url: /c/C0AU8AWD5BN
+              - generic [ref=f3e122]: "#macondo-help"
+              - emphasis [ref=f3e123]: Global admin
+            - link "#neighbourhood Global admin" [ref=f3e124] [cursor=pointer]:
+              - /url: /c/C01AS1YEM8A
+              - generic [ref=f3e125]: "#neighbourhood"
+              - emphasis [ref=f3e126]: Global admin
+            - link "#news Channel manager" [ref=f3e127] [cursor=pointer]:
+              - /url: /c/C0BJ6LTLAFJ
+              - generic [ref=f3e128]: "#news"
+              - emphasis [ref=f3e129]: Channel manager
+            - link "#outpost Global admin" [ref=f3e130] [cursor=pointer]:
+              - /url: /c/C0B04RP43TQ
+              - generic [ref=f3e131]: "#outpost"
+              - emphasis [ref=f3e132]: Global admin
+            - link "#outpost-announcements Global admin" [ref=f3e133] [cursor=pointer]:
+              - /url: /c/C0B519PGU22
+              - generic [ref=f3e134]: "#outpost-announcements"
+              - emphasis [ref=f3e135]: Global admin
+            - link "#outpost-experts Global admin" [ref=f3e136] [cursor=pointer]:
+              - /url: /c/C0B0CADUV3P
+              - generic [ref=f3e137]: "#outpost-experts"
+              - emphasis [ref=f3e138]: Global admin
+            - link "#outpost-idea-pool Global admin" [ref=f3e139] [cursor=pointer]:
+              - /url: /c/C0B1MBF96GZ
+              - generic [ref=f3e140]: "#outpost-idea-pool"
+              - emphasis [ref=f3e141]: Global admin
+            - link "#outpost-projects Global admin" [ref=f3e142] [cursor=pointer]:
+              - /url: /c/C0B09B5UBV1
+              - generic [ref=f3e143]: "#outpost-projects"
+              - emphasis [ref=f3e144]: Global admin
+            - link "#outpost-support Global admin" [ref=f3e145] [cursor=pointer]:
+              - /url: /c/C0BDYK5QQEM
+              - generic [ref=f3e146]: "#outpost-support"
+              - emphasis [ref=f3e147]: Global admin
+            - link "#present Global admin" [ref=f3e148] [cursor=pointer]:
+              - /url: /c/C01GPEL6CGM
+              - generic [ref=f3e149]: "#present"
+              - emphasis [ref=f3e150]: Global admin
+            - link "#prometheans Global admin" [ref=f3e151] [cursor=pointer]:
+              - /url: /c/C0ASZ9ZSVJ4
+              - generic [ref=f3e152]: "#prometheans"
+              - emphasis [ref=f3e153]: Global admin
+            - link "#radish-jam Global admin" [ref=f3e154] [cursor=pointer]:
+              - /url: /c/C0BAXEEC4J1
+              - generic [ref=f3e155]: "#radish-jam"
+              - emphasis [ref=f3e156]: Global admin
+            - link "#radish-jam-threads Global admin" [ref=f3e157] [cursor=pointer]:
+              - /url: /c/C0B697HHCE6
+              - generic [ref=f3e158]: "#radish-jam-threads"
+              - emphasis [ref=f3e159]: Global admin
+            - link "#ship Global admin" [ref=f3e160] [cursor=pointer]:
+              - /url: /c/C0M8PUPU6
+              - generic [ref=f3e161]: "#ship"
+              - emphasis [ref=f3e162]: Global admin
+            - link [ref=f3e163] [cursor=pointer]:
+              - /url: /c/C0ACGLZ5KBJ
+              - generic [ref=f3e164]: shipwrong-archive
+              - emphasis [ref=f3e168]: Global admin
+            - link "#some-help-bot-help Global admin" [ref=f3e169] [cursor=pointer]:
+              - /url: /c/C0BQJ85PYG2
+              - generic [ref=f3e170]: "#some-help-bot-help"
+              - emphasis [ref=f3e171]: Global admin
+            - link "#stelles-cozy-planet Global admin" [ref=f3e172] [cursor=pointer]:
+              - /url: /c/C0AL1T3CZ2S
+              - generic [ref=f3e173]: "#stelles-cozy-planet"
+              - emphasis [ref=f3e174]: Global admin
+            - link "#stickers Global admin" [ref=f3e175] [cursor=pointer]:
+              - /url: /c/C1FV67WVB
+              - generic [ref=f3e176]: "#stickers"
+              - emphasis [ref=f3e177]: Global admin
+            - link "#treasure-cove Global admin" [ref=f3e178] [cursor=pointer]:
+              - /url: /c/C07UMRYJ1LH
+              - generic [ref=f3e179]: "#treasure-cove"
+              - emphasis [ref=f3e180]: Global admin
+            - link "#welcome Global admin" [ref=f3e181] [cursor=pointer]:
+              - /url: /c/C75M7C0SY
+              - generic [ref=f3e182]: "#welcome"
+              - emphasis [ref=f3e183]: Global admin
+            - link "#ysws Global admin" [ref=f3e184] [cursor=pointer]:
+              - /url: /c/C0710J7F4U9
+              - generic [ref=f3e185]: "#ysws"
+              - emphasis [ref=f3e186]: Global admin
+            - link "#ysws-bulletin Global admin" [ref=f3e187] [cursor=pointer]:
+              - /url: /c/C0AP9N96LTX
+              - generic [ref=f3e188]: "#ysws-bulletin"
+              - emphasis [ref=f3e189]: Global admin
+            - link "#ysws-drafts︇ Global admin" [ref=f3e190] [cursor=pointer]:
+              - /url: /c/C0B9KCZU13N
+              - generic [ref=f3e191]: "#ysws-drafts︇"
+              - emphasis [ref=f3e192]: Global admin
+      - group [ref=f3e13]:
+        - generic "3kh0" [ref=f3e14] [cursor=pointer]
+  - main [ref=f3e20]:
+    - generic [ref=f3e21]:
+      - heading "Keyring" [level=1] [ref=f3e22]
+      - paragraph [ref=f3e23]: Use Prometheus on your own terms with a kick ass API
+    - generic [ref=f3e24]:
+      - generic [ref=f3e25]:
+        - heading "Your keys" [level=2] [ref=f3e27]
+        - button "Create key" [ref=f3e28] [cursor=pointer]
+      - paragraph [ref=f3e29]: Keys you made for this channel. Other managers cannot see or use them.
+      - generic [ref=f3e31]:
+        - generic [ref=f3e32]:
+          - code [ref=f3e33]: prom_40SfG-2v...
+          - generic [ref=f3e34]: ui-flows-meow · created 2026-08-25 · last used never
+        - button "Revoke ui-flows-meow" [ref=f3e36] [cursor=pointer]: Revoke

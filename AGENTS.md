@@ -54,6 +54,9 @@ All exported database functions are asynchronous and must be awaited. Multi-row 
 **Web dashboard and API** (`lib/web/`): A Hono app served by `lib/web/server.js`, mounted by
 `index.js` alongside the bot and also runnable on its own with `bun run start:web`. Sign-in is
 Slack OAuth through Better Auth (`auth.js`), restricted to the workspace the bot is installed in.
+The deployment runs behind Cloudflare, so Better Auth resolves client IPs from `cf-connecting-ip`
+first, falling back to `x-forwarded-for`/`x-real-ip`; when none are present (local dev, direct
+connections), `server.js` fills the header from the socket address.
 
 - `app.js` — routing, security headers, and same-origin checks on every session mutation
 - `api.js` — the public, bearer-authenticated `/api/v1` router
