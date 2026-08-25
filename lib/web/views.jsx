@@ -134,13 +134,13 @@ function ChannelSwitcher({ channels, selectedChannel }) {
                   <span class="ellipsis">
                     <ChannelName channel={channel} />
                   </span>
-                  <em>{roleLabels[channel.role] || "Member"}</em>
+                  <em>{roleLabels[channel.role]}</em>
                 </a>
               );
             })}
           </nav>
         ) : (
-          <p class="menu-note">You do not manage any channels yet.</p>
+          <p class="menu-note">Nothing to see here, come back when you are cooler</p>
         )}
       </div>
     </details>
@@ -434,7 +434,7 @@ function keyDate(seconds) {
   return new Date(Number(seconds) * 1000).toISOString().slice(0, 10);
 }
 
-function KeyList({ channel, keys, remaining, max }) {
+function KeyList({ channel, keys, remaining }) {
   const page = sectionPath(channel.channel_id, "");
   return (
     <Card id="keys">
