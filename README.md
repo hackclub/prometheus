@@ -37,6 +37,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 - **Workspace admin**: inherited from Slack
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
+- **Slack Channel Manager**: Slack's own native per-channel role (Enterprise Grid); can @here, @channel. Requires an org-wide app install with `admin.roles:read` — inert without `SLACK_ORG_TOKEN`/`CHANNEL_MANAGER_ROLE_ID`
 
 ## Web API
 
@@ -90,6 +91,8 @@ Other statuses: `400` malformed request, `401` missing or invalid key, `403` no 
 | `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                    |
 | `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                   |
 | `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                      |
+| `SLACK_ORG_TOKEN`      | No       | Org-wide app install token with `admin.roles:read`, for native Slack Channel Manager support        |
+| `CHANNEL_MANAGER_ROLE_ID` | No    | `role_id` of Slack's built-in Channel Manager role, paired with `SLACK_ORG_TOKEN`                   |
 | `SLACK_CLIENT_ID`      | No       | Slack app client ID used by Sign in with Slack                                                     |
 | `SLACK_CLIENT_SECRET`  | No       | Slack app client secret used by Sign in with Slack                                                 |
 | `BETTER_AUTH_SECRET`   | No       | Random secret of at least 32 characters used by Better Auth                                        |
