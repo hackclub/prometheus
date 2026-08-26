@@ -27,7 +27,7 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 
 - `lib/commands/` — subcommands under `/pro <subcommand>`. Each file exports a default with `{ name, execute }`. The router in `index.js` dispatches by name.
 - `lib/shortcuts/` — message shortcuts (e.g. Delete Message, Destroy Thread). Each exports `{ callbackId, execute, viewCallbackId?, handleView? }`.
-- `lib/listeners/` — event listeners. Each exports a default function + optional `export const event = 'type'` (defaults to `'message'`).
+- `lib/listeners/` — event listeners. Each exports a default function + optional `export const event = 'type'` (defaults to `'message'`) and `priority` (lower runs first). Returning `false` stops later listeners for that event.
 - `lib/actions/` — block kit action handlers. Each exports `{ actionId, execute }`.
 
 **Permission model** (`lib/perms.js`):
@@ -41,9 +41,11 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `canAnchor` — `canManage` OR workspaceAdmin
 - `SUPERADMINS` grants access to the `/pro admin` command; it does not automatically insert rows into `global_admins`
 
-**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, and `channel_api_keys`.
+**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `channel_posting_gates`, `channel_posting_gate_acceptances`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, and `channel_api_keys`.
 
 All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
+
+**Posting gates** (`lib/postingGate.js`): A channel manager can require either an ephemeral **I agree** button or an exact phrase before members may post. Join prompts are folded into `joinMessage.js`; missed prompts are retried after deleting an unaccepted message. Each configuration gets an immutable generation embedded in button values, and stale buttons refresh to the current terms without accepting them. `lib/listeners/postingGate.js` runs before other message listeners and returns `false` after handling a gated message so rejected content cannot trigger anchors, embed processing, or other downstream behavior. Phrase acknowledgements are stored before Slack deletes them.
 
 **Logging** (`lib/logger.js`): Logs deletions and thread nukes to `LOG_CHANNEL`. Uses `SLACK_BOT_TOKEN` for posting log messages and `HACKCLUB_CDN_KEY` for archiving thread content to the Hack Club CDN.
 

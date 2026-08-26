@@ -53,6 +53,47 @@ export const joinMessages = pgTable("join_messages", {
   setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
 });
 
+export const channelPostingGates = pgTable(
+  "channel_posting_gates",
+  {
+    channelId: text("channel_id").primaryKey(),
+    mode: text().notNull(),
+    prompt: text().notNull(),
+    phrase: text(),
+    generation: text().notNull(),
+    setBy: text("set_by").notNull(),
+    enabled: integer().notNull().default(1),
+    setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
+  },
+  (table) => [
+    check("channel_posting_gates_mode_check", sql`${table.mode} IN ('button', 'phrase')`),
+    check(
+      "channel_posting_gates_phrase_check",
+      sql`(${table.mode} = 'button' AND ${table.phrase} IS NULL) OR (${table.mode} = 'phrase' AND ${table.phrase} IS NOT NULL)`,
+    ),
+  ],
+);
+
+export const channelPostingGateAcceptances = pgTable(
+  "channel_posting_gate_acceptances",
+  {
+    channelId: text("channel_id").notNull(),
+    userId: text("user_id").notNull(),
+    acceptedAt: bigint("accepted_at", { mode: "number" }).notNull().default(epoch),
+  },
+  (table) => [
+    primaryKey({
+      name: "channel_posting_gate_acceptances_pkey",
+      columns: [table.channelId, table.userId],
+    }),
+    foreignKey({
+      name: "channel_posting_gate_acceptances_channel_id_fkey",
+      columns: [table.channelId],
+      foreignColumns: [channelPostingGates.channelId],
+    }).onDelete("cascade"),
+  ],
+);
+
 export const embedBlocks = pgTable(
   "embed_blocks",
   {
