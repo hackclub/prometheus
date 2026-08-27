@@ -92,12 +92,8 @@
           "name": "anchor_nps_responses_poll_id_fkey",
           "tableFrom": "anchor_nps_responses",
           "tableTo": "anchor_polls",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["poll_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -189,12 +185,8 @@
           "name": "anchor_poll_choices_poll_id_fkey",
           "tableFrom": "anchor_poll_choices",
           "tableTo": "anchor_polls",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["poll_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -301,12 +293,8 @@
           "name": "anchor_poll_votes_poll_id_fkey",
           "tableFrom": "anchor_poll_votes",
           "tableTo": "anchor_polls",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["poll_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -314,12 +302,8 @@
           "name": "anchor_poll_votes_choice_id_fkey",
           "tableFrom": "anchor_poll_votes",
           "tableTo": "anchor_poll_choices",
-          "columnsFrom": [
-            "choice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["choice_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -532,10 +516,7 @@
       "compositePrimaryKeys": {
         "appointed_managers_pkey": {
           "name": "appointed_managers_pkey",
-          "columns": [
-            "user_id",
-            "channel_id"
-          ]
+          "columns": ["user_id", "channel_id"]
         }
       },
       "uniqueConstraints": {},
@@ -700,10 +681,7 @@
       "compositePrimaryKeys": {
         "channel_bans_pkey": {
           "name": "channel_bans_pkey",
-          "columns": [
-            "user_id",
-            "channel_id"
-          ]
+          "columns": ["user_id", "channel_id"]
         }
       },
       "uniqueConstraints": {},
@@ -741,12 +719,8 @@
           "name": "channel_posting_gate_acceptances_channel_id_fkey",
           "tableFrom": "channel_posting_gate_acceptances",
           "tableTo": "channel_posting_gates",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "channel_id"
-          ],
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["channel_id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -754,10 +728,7 @@
       "compositePrimaryKeys": {
         "channel_posting_gate_acceptances_pkey": {
           "name": "channel_posting_gate_acceptances_pkey",
-          "columns": [
-            "channel_id",
-            "user_id"
-          ]
+          "columns": ["channel_id", "user_id"]
         }
       },
       "uniqueConstraints": {},
@@ -878,11 +849,7 @@
       "compositePrimaryKeys": {
         "embed_blocks_pkey": {
           "name": "embed_blocks_pkey",
-          "columns": [
-            "channel_id",
-            "type",
-            "target"
-          ]
+          "columns": ["channel_id", "type", "target"]
         }
       },
       "uniqueConstraints": {},
