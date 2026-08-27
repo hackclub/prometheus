@@ -29,6 +29,41 @@
       "when": 1787750464087,
       "tag": "0003_square_morlocks",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787831910618,
+      "tag": "0004_small_colleen_wing",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787833895175,
+      "tag": "0005_friendly_lady_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787835170078,
+      "tag": "0006_light_stature",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787835186476,
+      "tag": "0007_narrow_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1787837634322,
+      "tag": "0008_equal_lockheed",
+      "breakpoints": true
     }
   ]
 }
