@@ -63,6 +63,7 @@ export const channelPostingGates = pgTable(
     generation: text().notNull(),
     setBy: text("set_by").notNull(),
     enabled: integer().notNull().default(1),
+    kickOnJoin: integer("kick_on_join").notNull().default(0),
     setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
   },
   (table) => [

@@ -1,0 +1,1 @@
+ALTER TABLE "channel_posting_gates" ADD COLUMN "kick_on_join" integer DEFAULT 0 NOT NULL;

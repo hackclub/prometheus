@@ -28,7 +28,7 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `lib/commands/` — subcommands under `/pro <subcommand>`. Each file exports a default with `{ name, execute }`. The router in `index.js` dispatches by name.
 - `lib/shortcuts/` — message shortcuts (e.g. Delete Message, Destroy Thread). Each exports `{ callbackId, execute, viewCallbackId?, handleView? }`.
 - `lib/listeners/` — event listeners. Each exports a default function + optional `export const event = 'type'` (defaults to `'message'`) and `priority` (lower runs first). Returning `false` stops later listeners for that event.
-- `lib/actions/` — block kit action handlers. Each exports `{ actionId, execute }`.
+- `lib/actions/` — block kit action handlers. Each exports `{ actionId, execute }`. A file may also export `views` (an array of `{ callbackId, handleView }`) for modals its buttons open; unlike the command and shortcut loaders, these handlers are responsible for their own `ack()`.
 
 **Permission model** (`lib/perms.js`):
 
@@ -46,6 +46,23 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
 
 **Posting gates** (`lib/postingGate.js`): A channel manager can require either an ephemeral **I agree** button or an exact phrase before members may post. Phrase mode supports optional multiline channel information configured through a modal and shown as a quote before the exact phrase. Join prompts are folded into `joinMessage.js`; missed prompts are retried after deleting an unaccepted message. Each configuration gets an immutable generation embedded in button values, and stale buttons refresh to the current terms without accepting them. `lib/listeners/postingGate.js` runs before other message listeners and returns `false` after handling a gated message so rejected content cannot trigger anchors, embed processing, or other downstream behavior. Phrase acknowledgements are stored before Slack deletes them.
+
+**Kick on join** (`channel_posting_gates.kick_on_join`, toggled with `/pro gate kick on|off` or the
+`--kick` / `--no-kick` flag on `/pro gate set`): off by default, in which case an unverified member
+stays in the channel and only their messages are removed. When it is on, an unverified member is
+removed from the channel as they join and DMed the terms instead, so a busy channel never fills with
+gated messages in the first place. Deletion is still the backstop: someone who posts without
+verifying — an existing member, a rejoin, a kick Slack refused — has the message deleted and is then
+kicked and DMed. Acknowledging re-invites them (`channels:write.invites`).
+
+Two things follow from the member no longer being in the channel. Ephemeral messages will not reach
+them, so the whole prompt (welcome text included) moves into the DM, and the `posting_gate_agree`
+action trusts the channel encoded in the button value rather than `body.channel.id`, which is the DM. And a
+phrase can no longer be typed in the channel, so the DM carries a **Type the phrase** button opening
+the `posting_gate_phrase_entry` modal; `lib/actions/index.js` registers `views` exports without
+acking first, so that modal can answer `response_action: "errors"` and stay open on a wrong phrase.
+The re-invite fires `member_joined_channel` again, but the acceptance is already recorded by then, so
+the gate does not apply and there is no kick loop.
 
 **Slack Connect** (`lib/workspace.js`): `isExternalUser` tells whether a user belongs to another
 workspace. Prometheus cannot delete or manage members from other workspaces, so `postingGate.js` and
