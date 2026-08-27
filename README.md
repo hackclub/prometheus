@@ -37,7 +37,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 - **Workspace admin**: inherited from Slack
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
-- **Slack Channel Manager**: Slack's own native per-channel role (Enterprise Grid); can @here, @channel. Requires an org-wide app install with `admin.roles:read` — inert without `SLACK_ORG_TOKEN`/`CHANNEL_MANAGER_ROLE_ID`
+- **Slack Channel Manager**: Slack's own native per-channel role (Enterprise Grid); can @here, @channel. Read via the enterprise moderation creds — inert without `SLACK_BROWSER_TOKEN`/`SLACK_COOKIE`
 
 ## Web API
 
@@ -77,27 +77,25 @@ Other statuses: `400` malformed request, `401` missing or invalid key, `403` no 
 4. Create an app-level token with `connections:write` (for Socket Mode!).
 5. Fill out your `.env`, check the `.env.example` for reference. Here's a bit more detailed rundown of what to expect
 
-| Variable                  | Required | Purpose                                                                                            |
-| ------------------------- | -------- | -------------------------------------------------------------------------------------------------- |
-| `SLACK_BOT_TOKEN`         | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                   |
-| `SLACK_USER_TOKEN`        | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions         |
-| `SLACK_APP_TOKEN`         | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                    |
-| `SLACK_SIGNING_SECRET`    | Yes      | Signing secret from app settings                                                                   |
-| `SUPERADMINS`             | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)                |
-| `DATABASE_URL`            | Yes      | PostgreSQL connection URL                                                                          |
-| `DATABASE_POOL_SIZE`      | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                    |
-| `LOG_CHANNEL`             | API      | Channel ID for **private** audit logs which includes full message content and CDN transcripts      |
-| `PUBLIC_LOG_CHANNEL`      | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel  |
-| `HACKCLUB_CDN_KEY`        | No       | CDN API key for archiving deleted thread archives to the HC CDN                                    |
-| `SLACK_BROWSER_TOKEN`     | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                   |
-| `SLACK_COOKIE`            | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                      |
-| `SLACK_ORG_TOKEN`         | No       | Org-wide app install token with `admin.roles:read`, for native Slack Channel Manager support       |
-| `CHANNEL_MANAGER_ROLE_ID` | No       | `role_id` of Slack's built-in Channel Manager role, paired with `SLACK_ORG_TOKEN`                  |
-| `SLACK_CLIENT_ID`         | No       | Slack app client ID used by Sign in with Slack                                                     |
-| `SLACK_CLIENT_SECRET`     | No       | Slack app client secret used by Sign in with Slack                                                 |
-| `BETTER_AUTH_SECRET`      | No       | Random secret of at least 32 characters used by Better Auth                                        |
-| `DASHBOARD_BASE_URL`      | No       | Public HTTPS origin the dashboard and API are served from (e.g. `https://prometheus.hackclub.com`) |
-| `PORT`                    | No       | Port the dashboard and API listen on (defaults to 3000)                                            |
+| Variable               | Required | Purpose                                                                                            |
+| ---------------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| `SLACK_BOT_TOKEN`      | Yes      | Bot User OAuth Token (xoxb) for posting messages                                                   |
+| `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions         |
+| `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                    |
+| `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                   |
+| `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)                |
+| `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                          |
+| `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                    |
+| `LOG_CHANNEL`          | API      | Channel ID for **private** audit logs which includes full message content and CDN transcripts      |
+| `PUBLIC_LOG_CHANNEL`   | No       | Channel ID for **public** audit logs which are redacted, shows only who did what in which channel  |
+| `HACKCLUB_CDN_KEY`     | No       | CDN API key for archiving deleted thread archives to the HC CDN                                    |
+| `SLACK_BROWSER_TOKEN`  | No       | Browser token (xoxc) for Slack's undocumented moderation APIs (eg thread hiding)                   |
+| `SLACK_COOKIE`         | No       | Session cookie (`d=` value) paired with `SLACK_BROWSER_TOKEN`                                      |
+| `SLACK_CLIENT_ID`      | No       | Slack app client ID used by Sign in with Slack                                                     |
+| `SLACK_CLIENT_SECRET`  | No       | Slack app client secret used by Sign in with Slack                                                 |
+| `BETTER_AUTH_SECRET`   | No       | Random secret of at least 32 characters used by Better Auth                                        |
+| `DASHBOARD_BASE_URL`   | No       | Public HTTPS origin the dashboard and API are served from (e.g. `https://prometheus.hackclub.com`) |
+| `PORT`                 | No       | Port the dashboard and API listen on (defaults to 3000)                                            |
 
 6. Apply database migrations and run it:
 

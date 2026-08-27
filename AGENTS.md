@@ -36,7 +36,7 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `isWorkspaceAdmin` — Slack API check (`users.info`)
 - `isChannelManager` — `appointed_managers` with `role = 'manager'`
 - `isChannelModerator` — any role in `appointed_managers` (manager or moderator)
-- `isSlackChannelManager` — Slack's native Channel Manager role (Enterprise Grid), via `admin.roles.listAssignments`. No-ops (`false`) unless `SLACK_ORG_TOKEN`/`CHANNEL_MANAGER_ROLE_ID` are set — those only work if the app is installed org-wide with `admin.roles:read`, which is unrequested in `slack.manifest.yaml` until an Org Owner/Admin approves it
+- `isSlackChannelManager` — Slack's native Channel Manager role (Enterprise Grid), via `getChannelManagers` in `lib/moderation.js` (undocumented `admin.roles.entity.listAssignments`). Uses the same enterprise moderation creds (`SLACK_BROWSER_TOKEN`/`SLACK_COOKIE`); no-ops (`false`) when those aren't configured
 - `canManage` — globalAdmin OR channelManager (for delete/destroy/welcome)
 - `canBan` — globalAdmin OR channelModerator OR isSlackChannelManager (for ban/unban/@here/@channel)
 - `canAnchor` — `canManage` OR workspaceAdmin

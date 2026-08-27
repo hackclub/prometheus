@@ -55,7 +55,6 @@ oauth_config:
       - mpim:read
       - mpim:write
       - pins:write
-      - admin.roles:read
     user:
       - channels:history
       - channels:write
