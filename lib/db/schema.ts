@@ -225,3 +225,25 @@ export const channelApiKeys = pgTable(
       .where(sql`${table.revokedAt} IS NULL`),
   ],
 );
+
+export const triviaAnswers = pgTable(
+  "trivia_answers",
+  {
+    id: integer().primaryKey().generatedByDefaultAsIdentity(),
+    userId: text("user_id").notNull(),
+    correct: integer().notNull(),
+    points: integer().notNull(),
+    difficulty: text().notNull(),
+    category: text().notNull(),
+    createdAt: bigint("created_at", { mode: "number" }).notNull().default(epoch),
+  },
+  (table) => [
+    index("trivia_answers_created_at").on(table.createdAt),
+    index("trivia_answers_filters").on(table.difficulty, table.category),
+  ],
+);
+
+export const triviaStreaks = pgTable("trivia_streaks", {
+  userId: text("user_id").primaryKey(),
+  bestStreak: integer("best_streak").notNull().default(0),
+});

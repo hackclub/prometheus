@@ -1,0 +1,1 @@
+DROP TABLE "trivia_scores" CASCADE;

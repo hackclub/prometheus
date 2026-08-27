@@ -1,0 +1,1 @@
+ALTER TABLE "trivia_scores" ADD COLUMN "points" integer DEFAULT 0 NOT NULL;
