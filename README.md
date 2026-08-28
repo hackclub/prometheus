@@ -22,6 +22,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `ping`                                               | Everyone      | Check if the bot is alive              |
 | `info [@user]`                                       | Everyone      | Look up info about a Slack user        |
 | `coin`                                               | Everyone      | Flip a coin                            |
+| `cat`                                                | Everyone      | Get a random cat fact                  |
 | `help`                                               | Everyone      | Show available commands                |
 | `here <message>`                                     | Moderators    | Ping all online members in the channel |
 | `channel <message>`                                  | Moderators    | Ping everyone in the channel           |
