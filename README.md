@@ -63,6 +63,26 @@ curl -X POST https://prometheus.hackclub.com/api/v1/messages/delete \
 
 A `200` means the request was accepted, not that every message was deleted, so check `deleted` and `failed`, where each failure carries the Slack error (`message_not_found`, `cant_delete_message`).
 
+To delete a whole thread (root message plus every reply):
+
+```bash
+curl -X POST https://prometheus.hackclub.com/api/v1/threads/delete \
+  -H "Authorization: Bearer $PROMETHEUS_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"thread_ts":"1699999999.123456","reason":"spam thread"}'
+```
+
+```json
+{ "ok": true, "channel": "C0123ABCD", "thread_ts": "1699999999.123456" }
+```
+
+| Field       | Required | Notes                                           |
+| ----------- | -------- | ----------------------------------------------- |
+| `thread_ts` | Yes      | Timestamp of the thread's root message          |
+| `reason`    | Yes      | Up to 500 characters, recorded in the audit log |
+
+Deletion runs to completion server-side and keeps paging until the thread is empty; a `502 purge_failed` means it could not finish.
+
 Other statuses: `400` malformed request, `401` missing or invalid key, `403` no permission, `413` request body over 64 KB, `429` over the rate limit of 60 requests per minute.
 
 `GET /api/v1/key` just returns a key's metadata, which is handy for checking the status of a key.
