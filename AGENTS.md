@@ -89,6 +89,8 @@ Keys are scoped to one channel and one owner, stored only as a SHA-256 hash, and
 `canManage` on every request, so demoting an owner disables their keys without an explicit
 revocation. Deletions reuse `logDelete`/`publicLogDelete` and are attributed to the key's owner.
 Per-key throughput is capped at 60 requests per minute in memory, and batches at 50 messages.
+`POST /api/v1/threads/delete` takes a `thread_ts` and runs `purge()`, the same path as the
+`destroy_thread` shortcut.
 
 Two properties are load-bearing. `LOG_CHANNEL` is mandatory for the endpoint: `logDelete` treats an
 unset channel as a successful no-op, so without this guard the API would delete messages with no
