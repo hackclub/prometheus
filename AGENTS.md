@@ -45,7 +45,14 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 
 All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
 
-**Posting gates** (`lib/postingGate.js`): A channel manager can require either an ephemeral **I agree** button or an exact phrase before members may post. Phrase mode supports optional multiline channel information configured through a modal and shown as a quote before the exact phrase. Join prompts are folded into `joinMessage.js`; missed prompts are retried after deleting an unaccepted message. Each configuration gets an immutable generation embedded in button values, and stale buttons refresh to the current terms without accepting them. `lib/listeners/postingGate.js` runs before other message listeners and returns `false` after handling a gated message so rejected content cannot trigger anchors, embed processing, or other downstream behavior. Phrase acknowledgements are stored before Slack deletes them.
+**Posting gates** (`lib/postingGate.js`): A channel manager can require either an ephemeral **I agree** button or an exact phrase before members may post. Phrase mode supports optional multiline channel information configured through a modal and shown as a quote before the exact phrase. Join prompts are folded into `joinMessage.js`; missed prompts are retried after deleting an unaccepted message, and the retry quotes the deleted text back to the user (truncated to fit Slack's 3000-character block limit) so they don't have to retype it. Each configuration gets an immutable generation embedded in button values, and stale buttons refresh to the current terms without accepting them. `lib/listeners/postingGate.js` runs before other message listeners and returns `false` after handling a gated message so rejected content cannot trigger anchors, embed processing, or other downstream behavior. Phrase acknowledgements are stored before Slack deletes them.
+
+**Slack Connect** (`lib/workspace.js`): `isExternalUser` tells whether a user belongs to another
+workspace. Prometheus cannot delete or manage members from other workspaces, so `postingGate.js` and
+`joinMessage.js` skip them instead of prompting and failing forever. The check compares the user's
+team (or enterprise, on Grid) against `auth.test`, memoized per user, and uses the user token because
+the bot token has no `users:read` scope. A message event's `user_team` short-circuits the lookup only
+when it already matches the home workspace.
 
 **Logging** (`lib/logger.js`): Logs deletions and thread nukes to `LOG_CHANNEL`. Uses `SLACK_BOT_TOKEN` for posting log messages and `HACKCLUB_CDN_KEY` for archiving thread content to the Hack Club CDN.
 
@@ -82,6 +89,8 @@ Keys are scoped to one channel and one owner, stored only as a SHA-256 hash, and
 `canManage` on every request, so demoting an owner disables their keys without an explicit
 revocation. Deletions reuse `logDelete`/`publicLogDelete` and are attributed to the key's owner.
 Per-key throughput is capped at 60 requests per minute in memory, and batches at 50 messages.
+`POST /api/v1/threads/delete` takes a `thread_ts` and runs `purge()`, the same path as the
+`destroy_thread` shortcut.
 
 Two properties are load-bearing. `LOG_CHANNEL` is mandatory for the endpoint: `logDelete` treats an
 unset channel as a successful no-op, so without this guard the API would delete messages with no

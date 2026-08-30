@@ -24,6 +24,10 @@ features:
       type: message
       callback_id: delete_message
       description: Delete a single message.
+    - name: Remove From Channel
+      type: message
+      callback_id: remove_from_channel
+      description: Remove a message from the channel.
     - name: Clear Embeds
       type: message
       callback_id: clear_embeds

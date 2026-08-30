@@ -22,6 +22,8 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `ping`                                               | Everyone      | Check if the bot is alive              |
 | `info [@user]`                                       | Everyone      | Look up info about a Slack user        |
 | `coin`                                               | Everyone      | Flip a coin                            |
+| `cat`                                                | Everyone      | Get a random cat fact                  |
+| `define <word>`                                      | Everyone      | Look up a word's definition            |
 | `github [owner/]repo`                                | Everyone      | Look up info about a GitHub repository |
 | `help`                                               | Everyone      | Show available commands                |
 | `here <message>`                                     | Moderators    | Ping all online members in the channel |
@@ -62,6 +64,26 @@ curl -X POST https://prometheus.hackclub.com/api/v1/messages/delete \
 | `reason` | Yes      | Up to 500 characters, recorded in the audit log |
 
 A `200` means the request was accepted, not that every message was deleted, so check `deleted` and `failed`, where each failure carries the Slack error (`message_not_found`, `cant_delete_message`).
+
+To delete a whole thread (root message plus every reply):
+
+```bash
+curl -X POST https://prometheus.hackclub.com/api/v1/threads/delete \
+  -H "Authorization: Bearer $PROMETHEUS_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"thread_ts":"1699999999.123456","reason":"spam thread"}'
+```
+
+```json
+{ "ok": true, "channel": "C0123ABCD", "thread_ts": "1699999999.123456" }
+```
+
+| Field       | Required | Notes                                           |
+| ----------- | -------- | ----------------------------------------------- |
+| `thread_ts` | Yes      | Timestamp of the thread's root message          |
+| `reason`    | Yes      | Up to 500 characters, recorded in the audit log |
+
+Deletion runs to completion server-side and keeps paging until the thread is empty; a `502 purge_failed` means it could not finish.
 
 Other statuses: `400` malformed request, `401` missing or invalid key, `403` no permission, `413` request body over 64 KB, `429` over the rate limit of 60 requests per minute.
 
