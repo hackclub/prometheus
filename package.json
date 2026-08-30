@@ -7,7 +7,12 @@
   "main": "index.js",
   "scripts": {
     "start": "bun index.js",
+    "start:web": "bun dashboard.js",
     "dev": "bun --watch index.js",
+    "dev:web": "bun --watch dashboard.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun scripts/migrate.js",
+    "db:check": "drizzle-kit check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
@@ -16,11 +21,16 @@
   "dependencies": {
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
+    "better-auth": "^1.7.1",
     "dotenv": "^17.4.2",
-    "tldts": "^7.4.9"
+    "drizzle-orm": "0.45.2",
+    "hono": "^4.13.3",
+    "tldts": "^7.4.10"
   },
   "devDependencies": {
-    "oxfmt": "^0.60.0",
-    "oxlint": "^1.75.0"
+    "@types/bun": "^1.4.0",
+    "drizzle-kit": "0.31.10",
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0"
   }
 }
