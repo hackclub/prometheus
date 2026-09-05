@@ -39,6 +39,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 - **Workspace admin**: inherited from Slack
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
+- **Slack Channel Manager**: Slack's own native per-channel role (Enterprise Grid); can @here, @channel. Read via the enterprise moderation creds — inert without `SLACK_BROWSER_TOKEN`/`SLACK_COOKIE`
 
 ## Web API
 
