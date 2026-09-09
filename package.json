@@ -24,7 +24,7 @@
     "better-auth": "^1.7.2",
     "dotenv": "^17.4.2",
     "drizzle-orm": "0.45.2",
-    "hono": "^4.13.3",
+    "hono": "^4.13.5",
     "html-to-text": "^10.0.1",
     "tldts": "^7.4.11"
   },
