@@ -19,7 +19,7 @@
     "fmt:check": "oxfmt --check"
   },
   "dependencies": {
-    "@slack/bolt": "^4.7.3",
+    "@slack/bolt": "^5.1.0",
     "airtable": "^0.12.2",
     "better-auth": "^1.7.2",
     "dotenv": "^17.4.2",
