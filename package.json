@@ -21,17 +21,17 @@
   "dependencies": {
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
-    "better-auth": "^1.7.1",
-    "dotenv": "^17.4.2",
-    "drizzle-orm": "0.45.2",
-    "hono": "^4.13.3",
+    "better-auth": "^1.7.5",
+    "dotenv": "^18.0.3",
+    "drizzle-orm": "0.45.3",
+    "hono": "^4.13.8",
     "html-to-text": "^10.0.1",
-    "tldts": "^7.4.10"
+    "tldts": "^7.4.15"
   },
   "devDependencies": {
-    "@types/bun": "^1.4.0",
-    "drizzle-kit": "0.31.10",
-    "oxfmt": "^0.64.0",
-    "oxlint": "^1.79.0"
+    "@types/bun": "^1.4.2",
+    "drizzle-kit": "0.31.11",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0"
   }
 }
