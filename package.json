@@ -22,7 +22,7 @@
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
     "better-auth": "^1.7.5",
-    "dotenv": "^18.0.3",
+    "dotenv": "^18.0.5",
     "drizzle-orm": "0.45.3",
     "hono": "^4.13.9",
     "html-to-text": "^10.0.1",
