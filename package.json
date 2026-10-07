@@ -21,7 +21,7 @@
   "dependencies": {
     "@slack/bolt": "^4.7.3",
     "airtable": "^0.12.2",
-    "better-auth": "^1.7.5",
+    "better-auth": "^1.7.7",
     "dotenv": "^18.0.3",
     "drizzle-orm": "0.45.3",
     "hono": "^4.13.9",
