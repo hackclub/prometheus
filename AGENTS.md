@@ -15,7 +15,7 @@ bun run lint      # run oxlint
 bun run fmt       # format with oxfmt (fmt:check to verify)
 ```
 
-Run `bun test tests/purge-command.test.js` for the mocked bulk-purge regression tests (no Slack or database access required).
+Run `bun test` for the mocked bulk-purge and timeout regression tests (no Slack or database access required). Bun shares `mock.module` stubs across test files, so a test's mocks must also export whatever other test files import from the same module.
 
 ## Architecture
 
