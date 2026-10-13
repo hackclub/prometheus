@@ -225,3 +225,10 @@ export const channelApiKeys = pgTable(
       .where(sql`${table.revokedAt} IS NULL`),
   ],
 );
+
+export const channelDeletionDms = pgTable("channel_deletion_dms", {
+  channelId: text("channel_id").primaryKey(),
+  mode: text().notNull(),
+  setBy: text("set_by").notNull(),
+  setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
+});

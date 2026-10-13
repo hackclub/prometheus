@@ -33,6 +33,7 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 | `channelmanager add\|remove @user… [#channel…] [manager]` | Admins        | Appoint/remove roles across channels   |
 | `channelmanager list`                                     | Admins        | List roles for the current channel     |
 | `admin add\|remove\|list [@user]`                         | Global admins | Manage global admins                   |
+| `admin dms [#channel] [full\|nofooter\|off]`              | Global admins | Set what deletion DMs a channel sends  |
 
 **Permission roles:**
 

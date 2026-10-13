@@ -41,11 +41,16 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 - `canAnchor` — `canManage` OR workspaceAdmin
 - `SUPERADMINS` grants access to the `/pro admin` command; it does not automatically insert rows into `global_admins`
 
-**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `channel_posting_gates`, `channel_posting_gate_acceptances`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, and `channel_api_keys`.
+**Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. The Docker image's `CMD` does this on every container start and refuses to boot the bot if a migration fails. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `channel_posting_gates`, `channel_posting_gate_acceptances`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, `channel_api_keys`, and `channel_deletion_dms`.
 
 All exported database functions are asynchronous and must be awaited. Multi-row anchor creation and vote toggling use transactions and advisory locks so overlapping bot instances remain consistent during rolling deploys. Keep schema changes additive and safe for old and new application versions to run concurrently. Generate and commit migrations, do not try to manually create or edit drizzle migrations.
 
 **Posting gates** (`lib/postingGate.js`): A channel manager can require either an ephemeral **I agree** button or an exact phrase before members may post. Phrase mode supports optional multiline channel information configured through a modal and shown as a quote before the exact phrase. Join prompts are folded into `joinMessage.js`; missed prompts are retried after deleting an unaccepted message, and the retry quotes the deleted text back to the user (truncated to fit Slack's 3000-character block limit) so they don't have to retype it. Each configuration gets an immutable generation embedded in button values, and stale buttons refresh to the current terms without accepting them. `lib/listeners/postingGate.js` runs before other message listeners and returns `false` after handling a gated message so rejected content cannot trigger anchors, embed processing, or other downstream behavior. Phrase acknowledgements are stored before Slack deletes them.
+
+**Deletion DMs** (`lib/logger.js`): `notifyDeletion`, `notifyThreadDeletion`, and
+`notifyPurgeDeletion` DM the authors of removed messages, so every deletion path (shortcuts, purge,
+API) shares one per-channel setting. Global admins set it with `/pro admin dms`: `full` (default,
+stored as no row), `nofooter` (drops the "stewards… special rules" line), or `off` (no DM).
 
 **Slack Connect** (`lib/workspace.js`): `isExternalUser` tells whether a user belongs to another
 workspace. Prometheus cannot delete or manage members from other workspaces, so `postingGate.js` and
