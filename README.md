@@ -37,7 +37,8 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 **Permission roles:**
 
-- **Global admin**: seeded from `SUPERADMINS`.
+- **Superadmin**: every Slack workspace admin and owner, plus users listed in `SUPERADMINS`; can manage global admins with `/pro admin`.
+- **Global admin**: granted with `/pro admin add @user`.
 - **Workspace admin**: inherited from Slack
 - **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
@@ -106,7 +107,7 @@ Other statuses: `400` malformed request, `401` missing or invalid key, `403` no 
 | `SLACK_USER_TOKEN`     | Yes      | User OAuth Token (`xoxp`) from a **workspace admin** — required for all moderation actions         |
 | `SLACK_APP_TOKEN`      | Yes      | App-Level Token (xapp) with `connections:write` for Socket Mode                                    |
 | `SLACK_SIGNING_SECRET` | Yes      | Signing secret from app settings                                                                   |
-| `SUPERADMINS`          | Yes      | Comma-separated Slack user IDs seeded as global admins (e.g. `U12345678,U87654321`)                |
+| `SUPERADMINS`          | No       | Additional superadmin Slack user IDs; workspace admins and owners already have access              |
 | `DATABASE_URL`         | Yes      | PostgreSQL connection URL                                                                          |
 | `DATABASE_POOL_SIZE`   | No       | Maximum PostgreSQL connections per bot instance (defaults to 4)                                    |
 | `LOG_CHANNEL`          | API      | Channel ID for **private** audit logs which includes full message content and CDN transcripts      |
