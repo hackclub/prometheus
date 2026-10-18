@@ -32,14 +32,14 @@ Prometheus is a Slack bot built with `@slack/bolt` in Socket Mode. It runs via `
 
 **Permission model** (`lib/perms.js`):
 
-- `isGlobalAdmin` — stored in the PostgreSQL `global_admins` table
+- `isGlobalAdmin(userId, client)` — stored in the PostgreSQL `global_admins` table OR a current Slack workspace admin/owner. Pass the user-token client so Slack role checks have `users:read` access. `lib/db.js`'s function only checks stored grants.
 - `isWorkspaceAdmin` — Slack API check (`users.info`)
 - `isChannelManager` — `appointed_managers` with `role = 'manager'`
 - `isChannelModerator` — any role in `appointed_managers` (manager or moderator)
 - `canManage` — globalAdmin OR channelManager (for delete/destroy/welcome)
 - `canBan` — globalAdmin OR channelModerator (for ban/unban/@here)
 - `canAnchor` — `canManage` OR workspaceAdmin
-- Workspace admins and owners automatically have superadmin access to `/pro admin`; `SUPERADMINS` grants additional users the same access. Neither automatically inserts rows into `global_admins`.
+- Workspace admins and owners automatically have full global admin permissions, including `/pro admin`; `SUPERADMINS` grants additional users registry access only. Neither automatically inserts rows into `global_admins`.
 
 **Database** (`lib/db.js`): Uses Bun's native pooled PostgreSQL client, defaulting to four connections per bot instance. The Drizzle schema is `lib/db/schema.ts`; generated migrations live in `drizzle/` and must be applied with `bun run db:migrate` before starting a new application version. The Docker image's `CMD` does this on every container start and refuses to boot the bot if a migration fails. Tables are `global_admins`, `appointed_managers`, `channel_bans`, `join_messages`, `channel_posting_gates`, `channel_posting_gate_acceptances`, `embed_blocks`, `anchor_polls`, `anchor_poll_choices`, `anchor_poll_votes`, `anchor_nps_responses`, `channel_api_keys`, and `channel_deletion_dms`.
 
