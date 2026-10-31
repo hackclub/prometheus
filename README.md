@@ -17,30 +17,31 @@ Prometheus is a Slack bot that lets community members take responsibility for ke
 
 **Slash commands** (invoked via `/pro <subcommand>`):
 
-| Command                                                   | Who           | What it does                           |
-| --------------------------------------------------------- | ------------- | -------------------------------------- |
-| `ping`                                                    | Everyone      | Check if the bot is alive              |
-| `info [@user]`                                            | Everyone      | Look up info about a Slack user        |
-| `coin`                                                    | Everyone      | Flip a coin                            |
-| `cat`                                                     | Everyone      | Get a random cat fact                  |
-| `define <word>`                                           | Everyone      | Look up a word's definition            |
-| `help`                                                    | Everyone      | Show available commands                |
-| `here <message>`                                          | Moderators    | Ping all online members in the channel |
-| `channel <message>`                                       | Moderators    | Ping everyone in the channel           |
-| `timeout @user [duration] reason`                         | Moderators    | Time out a user from the channel       |
-| `untimeout @user`                                         | Moderators    | Remove a timeout                       |
-| `welcome [set\|remove\|view]`                             | Managers      | Manage the channel welcome message     |
-| `channelmanager add\|remove @user… [#channel…] [manager]` | Admins        | Appoint/remove roles across channels   |
-| `channelmanager list`                                     | Admins        | List roles for the current channel     |
-| `admin add\|remove\|list [@user]`                         | Global admins | Manage global admins                   |
-| `admin dms [#channel] [full\|nofooter\|off]`              | Global admins | Set what deletion DMs a channel sends  |
+| Command                                                   | Who           | What it does                             |
+| --------------------------------------------------------- | ------------- | ---------------------------------------- |
+| `ping`                                                    | Everyone      | Check if the bot is alive                |
+| `info [@user]`                                            | Everyone      | Look up info about a Slack user          |
+| `coin`                                                    | Everyone      | Flip a coin                              |
+| `cat`                                                     | Everyone      | Get a random cat fact                    |
+| `define <word>`                                           | Everyone      | Look up a word's definition              |
+| `help`                                                    | Everyone      | Show available commands                  |
+| `here <message>`                                          | Moderators    | Ping all online members in the channel   |
+| `channel <message>`                                       | Moderators    | Ping everyone in the channel             |
+| `timeout @user [duration] reason`                         | Moderators    | Time out a user from the channel         |
+| `untimeout @user`                                         | Moderators    | Remove a timeout                         |
+| `welcome [set\|remove\|view]`                             | Managers      | Manage the channel welcome message       |
+| `auditlog [set #channel\|status\|off]`                    | Managers      | Log this channel's mod actions + reasons |
+| `channelmanager add\|remove @user… [#channel…] [manager]` | Admins        | Appoint/remove roles across channels     |
+| `channelmanager list`                                     | Admins        | List roles for the current channel       |
+| `admin add\|remove\|list [@user]`                         | Global admins | Manage global admins                     |
+| `admin dms [#channel] [full\|nofooter\|off]`              | Global admins | Set what deletion DMs a channel sends    |
 
 **Permission roles:**
 
 - **Superadmin**: every Slack workspace admin and owner, plus users listed in `SUPERADMINS`; can manage global admins with `/pro admin`.
 - **Global admin**: granted with `/pro admin add @user`.
 - **Workspace admin**: inherited from Slack
-- **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages
+- **Channel manager**: appointed per-channel; can delete, destroy, set welcome messages, configure an audit log channel
 - **Channel moderator**: appointed per-channel; can timeout, @here, @channel
 
 ## Web API
