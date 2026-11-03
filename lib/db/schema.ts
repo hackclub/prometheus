@@ -232,3 +232,10 @@ export const channelDeletionDms = pgTable("channel_deletion_dms", {
   setBy: text("set_by").notNull(),
   setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
 });
+
+export const channelAuditLogs = pgTable("channel_audit_logs", {
+  channelId: text("channel_id").primaryKey(),
+  logChannelId: text("log_channel_id").notNull(),
+  setBy: text("set_by").notNull(),
+  setAt: bigint("set_at", { mode: "number" }).notNull().default(epoch),
+});
