@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { App, SocketModeReceiver } from "@slack/bolt";
 import { WebClient } from "@slack/web-api";
 import { registerCommands } from "./lib/commands/index.js";

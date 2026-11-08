@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { WebClient } from "@slack/web-api";
 import { checkDatabaseConnection, sql } from "./lib/db.js";
 import { startWebServer } from "./lib/web/server.js";
